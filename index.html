@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta name="theme-color" content="#0f3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brandschutz">
+<meta name="application-name" content="Brandschutz">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="Brandschutz-Dossier · Begehungschecklisten">
+
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" href="logo.png">
+<link rel="manifest" id="manifest-link">
+
+<title>Brandschutz-Dossier · Editor</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --blue-900: #0a2540;
+  --blue-800: #0f3a5f;
+  --blue-700: #14507f;
+  --blue-600: #1a6ba8;
+  --blue-100: #e8f1fa;
+  --blue-50:  #f4f8fc;
+  --red-600:  #c0392b;
+  --red-50:   #fdf2f0;
+  --green-700:#1e4620;
+  --green-600:#2f6a37;
+  --gray-900: #1a2330;
+  --gray-700: #3a4a5c;
+  --gray-500: #6b7c92;
+  --gray-300: #cbd5e1;
+  --gray-200: #e2e8f0;
+  --gray-100: #f0f4f8;
+  --gray-50:  #f8fafc;
+  --bg:       #eef3f8;
+  --card:     #ffffff;
+  --border:   #dbe5ef;
+  --shadow-sm: 0 1px 2px rgba(10,37,64,0.04);
+  --shadow:    0 1px 3px rgba(10,37,64,0.05), 0 6px 20px rgba(10,37,64,0.05);
+  --shadow-lg: 0 4px 12px rgba(10,37,64,0.06), 0 20px 40px rgba(10,37,64,0.07);
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--gray-900);
+  line-height: 1.55;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 1rem 0.75rem 5rem;
+  padding-top: max(1rem, env(safe-area-inset-top));
+  padding-bottom: max(5rem, env(safe-area-inset-bottom));
+  padding-left: max(0.75rem, env(safe-area-inset-left));
+  padding-right: max(0.75rem, env(safe-area-inset-right));
+  overscroll-behavior-y: contain;
+}
+
+.editor-container { max-width: 1280px; margin: 0 auto; }
+
+/* HEADER */
+.editor-header {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 0.75rem; margin-bottom: 1.25rem; padding: 0.85rem 1.1rem;
+  background: var(--card); border-radius: var(--r-lg); box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  position: sticky; top: max(0.75rem, env(safe-area-inset-top));
+  z-index: 100; backdrop-filter: blur(10px);
+}
+.brand { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+.brand-logo { height: 38px; width: auto; max-width: 120px; object-fit: contain; flex-shrink: 0; }
+.brand-text { min-width: 0; }
+.brand-title { font-size: 1.05rem; font-weight: 700; color: var(--blue-900); letter-spacing: -0.015em; line-height: 1.2; white-space: nowrap; }
+.brand-sub { font-size: 0.68rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.btn {
+  background: var(--card); border: 1px solid var(--border); color: var(--gray-700);
+  padding: 0.5rem 0.9rem; border-radius: 10px; font-weight: 600; font-size: 0.8rem;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: all 0.15s ease; font-family: inherit; white-space: nowrap;
+  letter-spacing: 0.01em; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:hover { border-color: var(--blue-600); color: var(--blue-700); background: var(--blue-50); }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--blue-800); border-color: var(--blue-800); color: #fff; box-shadow: 0 1px 2px rgba(15,58,95,0.2); }
+.btn-primary:hover { background: var(--blue-900); border-color: var(--blue-900); color: #fff; }
+.btn-danger { background: #fff; border-color: #f1c8c2; color: var(--red-600); }
+.btn-danger:hover { background: var(--red-50); border-color: var(--red-600); }
+.btn-sm { padding: 0.28rem 0.65rem; font-size: 0.72rem; border-radius: 8px; }
+
+/* KARTEN */
+.card {
+  background: var(--card); border-radius: var(--r-lg); padding: 1.25rem 1.4rem;
+  margin-bottom: 1.1rem; box-shadow: var(--shadow); border: 1px solid var(--border);
+}
+.card h2 {
+  font-size: 0.92rem; font-weight: 700; color: var(--blue-900);
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 0.55rem;
+  padding-bottom: 0.7rem; border-bottom: 1px solid var(--gray-100);
+  letter-spacing: -0.01em;
+}
+.card h2 .icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; background: var(--blue-100);
+  border-radius: 7px; font-size: 0.85rem;
+}
+
+/* FORMULAR */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+.field { display: flex; flex-direction: column; gap: 0.3rem; }
+.field label {
+  font-weight: 600; font-size: 0.68rem; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--gray-500);
+}
+.field input {
+  padding: 0.6rem 0.85rem; border: 1px solid var(--border);
+  border-radius: 10px; font-size: 16px; background: var(--gray-50);
+  transition: all 0.15s; font-family: inherit; width: 100%; color: var(--gray-900);
+  -webkit-appearance: none; appearance: none;
+}
+.field input:focus {
+  outline: none; border-color: var(--blue-600);
+  box-shadow: 0 0 0 3px rgba(26,107,168,0.1); background: #fff;
+}
+.inline-fields { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: flex-end; }
+.inline-fields .field { flex: 1 1 160px; }
+
+/* UNTERABTEILUNGS-LISTE */
+.sub-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.9rem; }
+.sub-item {
+  background: var(--gray-50); border-radius: var(--r); padding: 0.65rem 0.9rem;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0.7rem; border: 1px solid var(--border); transition: all 0.15s;
+}
+.sub-item:hover { border-color: var(--blue-600); background: #fff; box-shadow: var(--shadow-sm); }
+.sub-item .sub-info { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; align-items: center; font-size: 0.86rem; }
+.sub-item .sub-info strong { color: var(--blue-900); font-weight: 600; }
+.sub-item .sub-info span { color: var(--gray-500); font-size: 0.8rem; }
+.badge {
+  background: var(--blue-100); border-radius: 20px; padding: 0.15rem 0.6rem;
+  font-size: 0.68rem; font-weight: 700; color: var(--blue-700); letter-spacing: 0.02em;
+}
+
+/* ALLGEMEINE PUNKTE — Editor-Sektion */
+.general-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+/* Volle Funktionalität in der Editor-Ansicht */
+.general-editor-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-600);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  transition: all 0.15s;
+}
+.general-editor-item:hover { border-color: var(--border); box-shadow: var(--shadow-sm); }
+
+.general-editor-item .item-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.general-editor-item .item-main input[type="checkbox"] {
+  margin-top: 0.35rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--blue-700);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.general-editor-item .item-main .general-item-text {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--gray-900);
+  padding: 0.3rem 0;
+  line-height: 1.5;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.general-editor-item .item-main .general-item-text:focus {
+  outline: none;
+  border-bottom: 1px dashed var(--blue-600);
+}
+
+.general-editor-item .item-main .item-tools {
+  display: flex;
+  gap: 0.1rem;
+  flex-shrink: 0;
+  opacity: 0.65;
+  transition: opacity 0.15s;
+}
+.general-editor-item:hover .item-main .item-tools { opacity: 1; }
+@media (hover: none) {
+  .general-editor-item .item-main .item-tools { opacity: 1; }
+}
+
+/* DOSSIER-OUTPUT */
+.dossier-output {
+  background: var(--card); border-radius: var(--r-xl); padding: 1.75rem;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+}
+
+/* TITELSEITE */
+.title-page {
+  text-align: center; padding: 2rem 1rem 2rem;
+  margin-bottom: 2rem; border-bottom: 1px solid var(--gray-200);
+}
+.title-page .title-logo {
+  max-height: 90px; max-width: 220px; margin: 0 auto 1.5rem;
+  display: block; object-fit: contain;
+}
+.title-page .dept-big {
+  font-size: 2rem; font-weight: 800; color: var(--blue-900);
+  letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.5rem;
+  word-break: break-word;
+}
+.title-page .subtitle {
+  font-size: 0.78rem; color: var(--gray-500); font-weight: 600;
+  margin-bottom: 2.25rem; text-transform: uppercase; letter-spacing: 0.15em;
+}
+
+.signature-section {
+  display: flex; flex-direction: column; gap: 1.75rem;
+  max-width: 720px; margin: 0 auto; text-align: left;
+}
+.sig-director {
+  padding: 1rem 1.25rem; background: var(--blue-50);
+  border: 1px solid var(--border); border-radius: var(--r);
+  border-left: 4px solid var(--blue-700);
+}
+.sig-role {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--blue-700); margin-bottom: 0.35rem;
+}
+.sig-director .sig-role { color: var(--blue-800); font-size: 0.72rem; }
+.sig-name {
+  font-size: 1.05rem; font-weight: 600; color: var(--gray-900);
+  margin-bottom: 1.1rem;
+}
+.sig-director .sig-name { font-size: 1.15rem; font-weight: 700; color: var(--blue-900); }
+.sig-line { border-bottom: 1px solid var(--gray-500); height: 1.4rem; margin-bottom: 0.35rem; }
+.sig-caption {
+  font-size: 0.7rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.04em;
+}
+.sig-bsb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+.sig-block {
+  padding: 0.9rem 1.1rem; background: var(--gray-50);
+  border: 1px solid var(--border); border-radius: var(--r);
+}
+
+/* CHECKLISTEN-BLOCK */
+.checklist-block {
+  margin-bottom: 3rem; border: 1px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden; background: #fff;
+  box-shadow: 0 4px 16px rgba(10,37,64,0.06);
+}
+.checklist-block:last-child { margin-bottom: 0; }
+
+.checklist-header {
+  padding: 1.5rem 1.6rem 1.25rem;
+  background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 100%);
+  color: #fff;
+}
+.checklist-header .doc-label {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.16em; color: rgba(255,255,255,0.6); margin-bottom: 0.4rem;
+}
+.checklist-header .sub-name {
+  font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.15; color: #fff; word-break: break-word; margin-bottom: 0.9rem;
+}
+.checklist-header .sub-meta {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem;
+  font-size: 0.82rem; padding-top: 0.85rem;
+  border-top: 1px solid rgba(255,255,255,0.18);
+}
+.checklist-header .sub-meta span { display: inline-flex; gap: 0.45rem; align-items: baseline; }
+.checklist-header .sub-meta strong {
+  font-weight: 600; color: rgba(255,255,255,0.6);
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.checklist-body { padding: 1.5rem; }
+
+.checklist-block.general-block .checklist-header {
+  background: linear-gradient(135deg, var(--green-700) 0%, var(--green-600) 100%);
+}
+
+/* Meta-Zeile */
+.meta-row {
+  display: flex; flex-wrap: wrap; gap: 1.5rem;
+  margin-bottom: 1.5rem; padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+.meta-row .meta-group { display: flex; flex-direction: column; gap: 0.45rem; }
+.meta-row .meta-label {
+  font-weight: 700; font-size: 0.66rem; color: var(--gray-500);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.meta-row .options { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.meta-row .options label {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.8rem; padding: 0.28rem 0.65rem;
+  border-radius: 999px; background: var(--gray-50); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.12s; user-select: none; font-weight: 500;
+  color: var(--gray-700); -webkit-tap-highlight-color: transparent;
+}
+.meta-row .options label:hover { border-color: var(--blue-600); background: var(--blue-50); color: var(--blue-700); }
+.meta-row .options input { accent-color: var(--blue-700); margin: 0; }
+.meta-row .options label:has(input:checked) {
+  background: var(--blue-700); border-color: var(--blue-700); color: #fff;
+}
+
+/* KATEGORIEN */
+.category {
+  margin-bottom: 1.5rem; padding: 1rem 1.15rem;
+  background: var(--gray-50); border-radius: var(--r);
+  border: 1px solid var(--border); transition: all 0.2s;
+}
+.category.cat-removed { opacity: 0.45; background: #f5f5f5; }
+.category.cat-removed .check-items,
+.category.cat-removed .add-item-form,
+.category.cat-removed .info-box { display: none; }
+
+.category-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.7rem; margin-bottom: 0.8rem;
+}
+.category-header h4 {
+  font-size: 0.92rem; font-weight: 700; color: var(--blue-900);
+  letter-spacing: -0.01em;
+}
+.category-header .cat-tools { display: flex; gap: 0.2rem; }
+
+.check-items { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+
+.check-item {
+  padding: 0.55rem 0.7rem; border-radius: 10px;
+  background: #fff; border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.check-item:hover { border-color: var(--border); }
+.check-item.item-removed { opacity: 0.4; background: #f5f5f5; }
+.check-item.item-removed .item-text {
+  text-decoration: line-through;
+  text-decoration-color: var(--red-600);
+  text-decoration-thickness: 1.5px;
+  color: var(--gray-500);
+}
+.check-item.custom-item { border-left: 3px solid var(--green-600); }
+
+.item-main { display: flex; align-items: flex-start; gap: 0.6rem; }
+.item-main input[type="checkbox"] {
+  margin-top: 0.2rem; width: 1.1rem; height: 1.1rem;
+  accent-color: var(--blue-700); flex-shrink: 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.item-text { flex: 1; font-size: 0.88rem; line-height: 1.5; color: var(--gray-900); }
+
+.item-tools {
+  display: flex; gap: 0.1rem; flex-shrink: 0;
+  opacity: 0; transition: opacity 0.15s;
+}
+@media (hover: none) { .item-tools { opacity: 1; } }
+.check-item:hover .item-tools { opacity: 1; }
+
+.tool-btn {
+  background: transparent; border: none;
+  width: 30px; height: 30px; border-radius: 7px;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.82rem; color: var(--gray-500); transition: all 0.12s;
+  padding: 0; line-height: 1; -webkit-tap-highlight-color: transparent;
+}
+.tool-btn:hover { background: var(--blue-100); color: var(--blue-700); }
+.tool-btn.danger:hover { background: var(--red-50); color: var(--red-600); }
+.tool-btn.active { background: var(--blue-700); color: #fff; }
+
+/* Inline-Add-Form */
+.add-item-form {
+  display: flex; gap: 0.4rem; margin-top: 0.6rem;
+  padding: 0.4rem 0.5rem; background: #fff;
+  border: 1px dashed var(--border); border-radius: 10px;
+  transition: all 0.15s;
+}
+.add-item-form:focus-within {
+  border-style: solid; border-color: var(--blue-600);
+  box-shadow: 0 0 0 3px rgba(26,107,168,0.08);
+}
+.add-item-form input[type="text"] {
+  flex: 1; border: none; background: transparent;
+  font-size: 0.88rem; font-family: inherit; padding: 0.35rem 0.5rem;
+  color: var(--gray-900); min-width: 0;
+}
+.add-item-form input[type="text"]:focus { outline: none; }
+.add-item-form input[type="text"]::placeholder { color: var(--gray-500); }
+.add-item-form button {
+  background: var(--blue-800); color: #fff; border: none;
+  border-radius: 8px; padding: 0.35rem 0.85rem;
+  font-size: 0.78rem; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.add-item-form button:hover { background: var(--blue-900); }
+.add-item-form button:active { transform: translateY(1px); }
+
+/* Kommentar */
+.comment-box { margin-top: 0.5rem; margin-left: 1.6rem; display: none; }
+.comment-box.visible { display: block; }
+.comment-box textarea {
+  width: 100%; padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 16px; font-family: inherit; resize: vertical;
+  min-height: 58px; background: #fff; color: var(--gray-900);
+  line-height: 1.5; -webkit-appearance: none; appearance: none;
+}
+.comment-box textarea:focus {
+  outline: none; border-color: var(--blue-600);
+  box-shadow: 0 0 0 3px rgba(26,107,168,0.08);
+}
+
+/* Bilder */
+.image-strip {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.45rem; margin-top: 0.55rem; margin-left: 1.6rem;
+}
+.image-thumb {
+  position: relative; aspect-ratio: 1; border-radius: 10px;
+  overflow: hidden; border: 1px solid var(--border);
+  background: var(--gray-100); cursor: zoom-in;
+}
+.image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
+.image-thumb:hover img { transform: scale(1.04); }
+.image-thumb .remove-img {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(26,35,48,0.75); color: #fff;
+  border: none; width: 24px; height: 24px; border-radius: 50%;
+  cursor: pointer; font-size: 0.7rem;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1; padding: 0; opacity: 1;
+  transition: opacity 0.15s, background 0.15s;
+}
+@media (hover: hover) {
+  .image-thumb .remove-img { opacity: 0; }
+  .image-thumb:hover .remove-img { opacity: 1; }
+}
+.image-thumb .remove-img:hover { background: var(--red-600); }
+
+/* Tabellen */
+.pruef-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 0.4rem; background: #fff; border-radius: 8px; overflow: hidden; }
+.pruef-table th {
+  text-align: left; font-weight: 700; color: var(--blue-900);
+  padding: 0.55rem 0.7rem; background: var(--gray-100);
+  font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.pruef-table td {
+  padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+.pruef-table tr:last-child td { border-bottom: none; }
+.pruef-table td input[type="checkbox"] { accent-color: var(--blue-700); width: 1.1rem; height: 1.1rem; }
+.pruef-table .kommentar-input {
+  width: 100%; border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.35rem 0.55rem; font-size: 16px; font-family: inherit;
+  background: var(--gray-50); -webkit-appearance: none; appearance: none;
+}
+.pruef-table .kommentar-input:focus { outline: none; border-color: var(--blue-600); background: #fff; }
+
+.footnote {
+  font-size: 0.76rem; color: var(--gray-500); margin-top: 0.7rem;
+  padding: 0.55rem 0.85rem; background: #fff; border-radius: 8px;
+  border-left: 3px solid var(--blue-600); font-style: italic;
+}
+.info-box {
+  font-size: 0.76rem; color: var(--gray-500); margin-top: 0.55rem;
+  padding: 0.4rem 0.7rem; background: #fff; border-radius: 6px;
+  display: inline-block; font-style: italic;
+}
+
+/* Utility */
+.text-muted { color: var(--gray-500); font-size: 0.85rem; }
+.hidden { display: none !important; }
+
+.toast {
+  position: fixed; bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%) translateY(90px);
+  background: var(--blue-900); color: #fff;
+  padding: 0.7rem 1.3rem; border-radius: 10px;
+  font-size: 0.84rem; font-weight: 500;
+  box-shadow: 0 12px 32px rgba(10,37,64,0.25);
+  opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 9999; pointer-events: none; max-width: 90vw; text-align: center;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+.image-viewer {
+  position: fixed; inset: 0; background: rgba(10,25,40,0.92);
+  display: none; align-items: center; justify-content: center;
+  z-index: 10000; padding: 1.5rem; cursor: zoom-out;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.image-viewer.open { display: flex; }
+.image-viewer img {
+  max-width: 92%; max-height: 92%; border-radius: 12px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+
+/* DRUCK */
+@media print {
+  @page { size: A4; margin: 10mm 10mm; }
+
+  html, body {
+    background: #fff !important; padding: 0 !important;
+    font-size: 9.5pt; line-height: 1.28; color: #000;
+  }
+
+  .no-print, .editor-header, .editor-input-section, .toolbar, .btn,
+  .tool-btn, .item-tools, .cat-tools, .add-item-form,
+  .toast, .image-viewer, .image-input { display: none !important; }
+
+  .editor-container { max-width: 100%; padding: 0; margin: 0; }
+
+  .dossier-output {
+    box-shadow: none !important; border: none !important;
+    padding: 0 !important; margin: 0 !important;
+    border-radius: 0 !important; background: #fff !important;
+  }
+
+  .title-page {
+    page-break-after: always; padding: 2.5cm 1cm 1cm;
+    text-align: center; border-bottom: none !important; margin-bottom: 0 !important;
+  }
+  .title-page .title-logo { max-height: 110px; max-width: 280px; margin-bottom: 1.5cm; }
+  .title-page .dept-big { font-size: 28pt; color: #0a2540 !important; margin-bottom: 0.4cm; }
+  .title-page .subtitle { font-size: 10pt; color: #444 !important; margin-bottom: 2.5cm; letter-spacing: 0.18em; }
+
+  .signature-section { max-width: 100%; gap: 2.5cm; margin-top: 3cm; }
+  .sig-director { background: none !important; border: none !important; border-left: none !important; padding: 0 !important; }
+  .sig-role { color: #333 !important; font-size: 9pt; margin-bottom: 0.3cm; }
+  .sig-name { font-size: 12pt; color: #000 !important; margin-bottom: 1.6cm; }
+  .sig-director .sig-name { font-size: 13pt; }
+  .sig-line { border-bottom: 1px solid #000 !important; height: 1cm; margin-bottom: 0.15cm; }
+  .sig-caption { color: #555 !important; font-size: 8pt; }
+  .sig-bsb-grid { display: block; }
+  .sig-block { background: none !important; border: none !important; padding: 0 !important; margin-bottom: 2.5cm; }
+  .sig-block:last-child { margin-bottom: 0; }
+
+  .checklist-block {
+    page-break-before: always;
+    border: none !important; border-radius: 0 !important;
+    overflow: visible !important; margin-bottom: 0 !important;
+    box-shadow: none !important;
+  }
+  .checklist-header {
+    background: #0a2540 !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    padding: 0.45cm 0.55cm 0.4cm; border-radius: 3px 3px 0 0;
+    margin-bottom: 0.3cm; color: #fff !important;
+  }
+  .checklist-block.general-block .checklist-header {
+    background: #1e4620 !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .checklist-header .doc-label {
+    font-size: 7pt; color: rgba(255,255,255,0.7) !important;
+    margin-bottom: 0.12cm; letter-spacing: 0.14em;
+  }
+  .checklist-header .sub-name { font-size: 16pt; margin-bottom: 0.25cm; line-height: 1.1; }
+  .checklist-header .sub-meta {
+    font-size: 8.5pt; gap: 0.15cm 0.8cm; padding-top: 0.2cm;
+    border-top: 1px solid rgba(255,255,255,0.25) !important;
+    color: rgba(255,255,255,0.95) !important;
+  }
+  .checklist-header .sub-meta strong { color: rgba(255,255,255,0.65) !important; }
+
+  .checklist-body { padding: 0 !important; }
+
+  .meta-row {
+    display: flex; gap: 1cm; margin-bottom: 0.3cm;
+    padding: 0.25cm 0.35cm; background: #f4f8fc !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    border: none !important; border-bottom: none !important;
+    border-radius: 3px; page-break-inside: avoid;
+  }
+  .meta-row .meta-group { gap: 0.15cm; }
+  .meta-row .options label {
+    background: #fff !important; border: 1px solid #cbd5e1 !important;
+    padding: 0.1cm 0.35cm; font-size: 8.5pt; color: #333 !important;
+  }
+  .meta-row .options label:has(input:checked) {
+    background: #0f3a5f !important; border-color: #0f3a5f !important; color: #fff !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: 700;
+  }
+  .meta-row .options input { display: none !important; }
+  .meta-row .options label:not(:has(input:checked)) { display: none; }
+  .meta-row .meta-label { color: #333 !important; font-size: 7.5pt; }
+
+  .category {
+    margin-bottom: 0.25cm; padding: 0 !important;
+    background: none !important; border: none !important;
+    border-radius: 0 !important; page-break-inside: auto;
+  }
+  .category.cat-removed { display: none !important; }
+  .category-header {
+    padding-bottom: 0.05cm; margin-bottom: 0.1cm;
+    border-bottom: 1pt solid #0a2540; page-break-after: avoid;
+  }
+  .category-header h4 { font-size: 10pt; color: #0a2540 !important; line-height: 1.2; }
+
+  .check-items { gap: 0 !important; }
+  .check-item {
+    padding: 0.06cm 0.2cm !important; background: none !important;
+    border: none !important; border-radius: 0 !important;
+    page-break-inside: avoid; line-height: 1.28;
+  }
+  .check-item.custom-item { border-left: none !important; }
+  .check-item.item-removed { display: none !important; }
+
+  .item-main { gap: 0.3rem; }
+  .item-main input[type="checkbox"] {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    accent-color: #0a2540; width: 9pt; height: 9pt; margin-top: 1.5pt;
+  }
+  .item-text { font-size: 9.5pt; color: #000 !important; line-height: 1.28; }
+
+  .comment-box { margin-left: 0.5cm; margin-top: 0.05cm; margin-bottom: 0.05cm; }
+  .comment-box.visible { display: block !important; }
+  .comment-box textarea {
+    border: none !important; border-left: 1.5pt solid #0f3a5f !important;
+    background: #f8fafc !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    padding: 0.12cm 0.35cm; min-height: auto; font-size: 8.5pt;
+    line-height: 1.3; resize: none; border-radius: 0 !important;
+    color: #333 !important; overflow: hidden; height: auto;
+  }
+
+  .image-strip {
+    display: flex !important; flex-wrap: wrap; gap: 0.15cm;
+    margin-left: 0.5cm; margin-top: 0.1cm; margin-bottom: 0.1cm;
+  }
+  .image-thumb {
+    width: 4.2cm; height: 4.2cm; border-radius: 2px;
+    border: 0.5pt solid #cbd5e1 !important; cursor: default;
+    page-break-inside: avoid; overflow: hidden; background: #f4f8fc !important;
+  }
+  .image-thumb img { width: 100%; height: 100%; object-fit: cover; transform: none !important; }
+  .image-thumb .remove-img { display: none !important; }
+
+  .pruef-table {
+    font-size: 8.5pt; page-break-inside: auto;
+    border: 0.5pt solid #cbd5e1 !important; border-radius: 0 !important;
+    overflow: visible !important; line-height: 1.25;
+  }
+  .pruef-table th {
+    background: #e8f1fa !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    color: #0a2540 !important; padding: 0.12cm 0.2cm;
+    font-size: 7.5pt; border-bottom: 0.5pt solid #cbd5e1;
+  }
+  .pruef-table td { padding: 0.1cm 0.2cm; border-bottom: 0.5pt solid #e2e8f0; }
+  .pruef-table tr { page-break-inside: avoid; }
+  .pruef-table td input[type="checkbox"] {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    accent-color: #0a2540; width: 9pt; height: 9pt;
+  }
+  .pruef-table .kommentar-input {
+    border: none !important; background: none !important;
+    padding: 0 !important; font-size: 8.5pt !important;
+    color: #000 !important; width: 100%;
+  }
+
+  .footnote {
+    font-size: 7.5pt; border-left: 1.5pt solid #0f3a5f !important;
+    background: #f8fafc !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    padding: 0.15cm 0.3cm; margin-top: 0.2cm;
+  }
+  .info-box {
+    font-size: 7.5pt; background: #f8fafc !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    padding: 0.12cm 0.3cm; margin-top: 0.15cm;
+  }
+
+  .image-strip:empty { display: none !important; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 820px) {
+  .editor-header { position: static; }
+  .dossier-output { padding: 1.25rem; }
+  .title-page .dept-big { font-size: 1.6rem; }
+  .checklist-body { padding: 1.1rem; }
+  .checklist-header { padding: 1.25rem 1.3rem 1.1rem; }
+  .checklist-header .sub-name { font-size: 1.3rem; }
+  .category { padding: 0.85rem 0.9rem; }
+  .comment-box { margin-left: 0.5rem; }
+  .image-strip { margin-left: 0.5rem; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+  .item-tools { opacity: 1; }
+  .meta-row { gap: 1rem; }
+}
+
+@media (max-width: 520px) {
+  body { font-size: 14px; }
+  .brand-title { font-size: 0.95rem; }
+  .toolbar { width: 100%; }
+  .toolbar .btn { flex: 1; justify-content: center; }
+  .title-page .dept-big { font-size: 1.35rem; }
+  .checklist-header .sub-name { font-size: 1.15rem; }
+}
+</style>
+</head>
+<body>
+<div class="editor-container">
+
+  <header class="editor-header no-print">
+    <div class="brand">
+      <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-text">
+        <div class="brand-title">Brandschutz-Dossier</div>
+        <div class="brand-sub">Begehungs-Editor</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="printBtn">🖨️ PDF</button>
+      <button class="btn btn-primary" id="exportBtn">⬇️ HTML</button>
+      <button class="btn btn-danger" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <section class="editor-input-section no-print">
+    <div class="card">
+      <h2><span class="icon">🏢</span> Abteilung & Verantwortliche</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="deptName">Abteilung / Bereich</label>
+          <input type="text" id="deptName" placeholder="z. B. Klinik für Radiologie">
+        </div>
+        <div class="field">
+          <label for="director">Direktor:in der Abteilung</label>
+          <input type="text" id="director" placeholder="z. B. Prof. Dr. med. Maria Schmidt">
+        </div>
+        <div class="field">
+          <label for="officer1">Brandschutzbeauftragte:r (1)</label>
+          <input type="text" id="officer1" placeholder="Name">
+        </div>
+        <div class="field">
+          <label for="officer2">Brandschutzbeauftragte:r (2)</label>
+          <input type="text" id="officer2" placeholder="Name (optional)">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📌</span> Allgemeine Brandschutzpunkte (vor allen Unterabteilungen)</h2>
+      <p class="text-muted" style="margin-bottom:0.75rem;">
+        Diese Punkte erscheinen als eigener Block <strong>vor</strong> den Unterabteilungen im Dossier.
+        Hier können Sie bereits Kommentare und Bilder hinterlegen – sie erscheinen dann auch im Dossier.
+      </p>
+      <div class="inline-fields">
+        <div class="field">
+          <label for="generalTitle">Titel der allgemeinen Kategorie</label>
+          <input type="text" id="generalTitle" placeholder="Allgemeine Brandschutzpunkte">
+        </div>
+      </div>
+      <div class="inline-fields" style="margin-top:0.85rem;">
+        <div class="field" style="flex:1 1 100%;">
+          <label for="generalNewItem">Neuen allgemeinen Punkt hinzufügen</label>
+          <div style="display:flex; gap:0.5rem;">
+            <input type="text" id="generalNewItem" placeholder="z. B. Notausgangstür im Foyer frei">
+            <button class="btn btn-primary" id="addGeneralItemBtn" style="white-space:nowrap;">＋ Hinzufügen</button>
+          </div>
+        </div>
+      </div>
+      <div class="general-items-list" id="generalItemsList"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📋</span> Unterabteilungen</h2>
+      <div class="inline-fields">
+        <div class="field">
+          <label for="subName">Unterabteilung</label>
+          <input type="text" id="subName" placeholder="z. B. MRT 1">
+        </div>
+        <div class="field">
+          <label for="subBuilding">Gebäude / Etage</label>
+          <input type="text" id="subBuilding" placeholder="z. B. Haus C, Ebene 2">
+        </div>
+        <div class="field">
+          <label for="subDate">Datum</label>
+          <input type="text" id="subDate" placeholder="TT.MM.JJJJ">
+        </div>
+        <button class="btn btn-primary" id="addSubBtn">＋ Hinzufügen</button>
+      </div>
+      <div class="sub-list" id="subListContainer"></div>
+    </div>
+  </section>
+
+  <div class="dossier-output" id="dossierOutput">
+    <div id="dossierContent"></div>
+  </div>
+
+</div>
+
+<div class="image-viewer" id="imageViewer"><img src="" alt="Vorschau" id="viewerImg"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // PWA
+  (function setupPWA() {
+    const manifest = {
+      name: 'Brandschutz-Dossier', short_name: 'Brandschutz',
+      description: 'Brandschutz-Dossier · Begehungschecklisten',
+      start_url: '.', scope: '.', display: 'standalone', orientation: 'any',
+      background_color: '#eef3f8', theme_color: '#0f3a5f', lang: 'de',
+      icons: [
+        { src: 'logo.png', sizes: '180x180', type: 'image/png', purpose: 'any' },
+        { src: 'logo.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: 'logo.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+      ]
+    };
+    try {
+      const mb = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      const mu = URL.createObjectURL(mb);
+      const le = document.getElementById('manifest-link');
+      if (le) le.href = mu;
+    } catch (e) {}
+
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      const swCode = [
+        "const CACHE='brandschutz-v1';",
+        "const ASSETS=['./','./index.html','./logo.png'];",
+        "self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS).catch(()=>{})))});",
+        "self.addEventListener('activate',e=>{self.clients.claim()});",
+        "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{const cl=r.clone();caches.open(CACHE).then(cc=>cc.put(e.request,cl)).catch(()=>{});return r}).catch(()=>caches.match('./'))))});"
+      ].join('\n');
+      try {
+        const swb = new Blob([swCode], { type: 'application/javascript' });
+        const swu = URL.createObjectURL(swb);
+        navigator.serviceWorker.register(swu).then(() => {}, err => console.info('SW:', err.message));
+      } catch (e) {}
+    }
+  })();
+
+  // KATEGORIEN
+  const CATEGORIES = [
+    { id: 'unterlagen', title: 'Unterlagen & Kennzeichnung', items: [
+      'Lage-/Feuerwehrplan vorhanden und zugänglich',
+      'Flucht- und Rettungsplan vorhanden',
+      'Plan entspricht der tatsächlichen Raumaufteilung',
+      'Fluchtwege und Ausgänge eindeutig gekennzeichnet',
+      'Sammelstelle bekannt / gekennzeichnet',
+      'Brandschutzordnung zugänglich',
+      'Notfall-/Alarmierungsinformationen vorhanden'
+    ]},
+    { id: 'fluchtwege', title: 'Flucht- und Rettungswege', items: [
+      'Flure frei und ausreichend breit',
+      'Notausgänge zugänglich',
+      'Treppenräume frei',
+      'Türen im Fluchtweg benutzbar',
+      'Türen nicht durch Mobiliar/Geräte blockiert',
+      'Keine Kartons oder Materialien in Fluchtwegen',
+      'Fluchtwegkennzeichnungen sichtbar',
+      'Ausgangsschilder nicht verdeckt',
+      'Wagen/Transportmittel engen Fluchtwege nicht ein',
+      'Sicherheits-/Notbeleuchtung augenscheinlich funktionsfähig',
+      'Keine offensichtlichen Schäden an Fluchttüren'
+    ]},
+    { id: 'tueren', title: 'Türen, Verschlüsse & Brandabschnitte', items: [
+      'Brandschutztüren vorhanden / gekennzeichnet, soweit vorgesehen',
+      'Selbstschließung funktioniert augenscheinlich',
+      'Keine Brandschutztüren verkeilt oder dauerhaft offengehalten',
+      'Türen schließen vollständig',
+      'Keine offensichtlichen Beschädigungen',
+      'Feststellanlagen augenscheinlich funktionsfähig',
+      'Keine Gegenstände im Schließbereich',
+      'Zutrittskontrollierte Türen im Notfall entsprechend Vorgabe nutzbar',
+      'Keine offensichtlichen baulichen Veränderungen / Durchdringungen'
+    ]},
+    { id: 'loescher', title: 'Feuerlöscher & Löschmittel', items: [
+      'Vorgesehene Feuerlöscher vorhanden',
+      'Sichtbar', 'Zugänglich', 'Nicht zugestellt',
+      'Kennzeichnung sichtbar', 'Prüfplakette vorhanden',
+      'Prüffrist augenscheinlich aktuell',
+      'Keine offensichtlichen äußeren Schäden',
+      'Sicherung/Plombe augenscheinlich vorhanden',
+      'Geeignetes Löschmittel für den vorgesehenen Einsatzort',
+      'Löschdecke vorhanden, soweit vorgesehen',
+      'Zugänglich und gekennzeichnet'
+    ]},
+    { id: 'bma', title: 'Brandmeldeanlage & Alarmierung', items: [
+      'Brand-/Rauchmelder vorhanden, soweit vorgesehen',
+      'Melder nicht verdeckt oder zugestellt',
+      'Keine offensichtlichen Beschädigungen',
+      'Handfeuermelder zugänglich',
+      'Handfeuermelder gekennzeichnet',
+      'Keine sichtbare Störungsanzeige',
+      'Alarmierungseinrichtungen nicht verdeckt',
+      'Personal kennt Alarmierungsweg'
+    ]},
+    { id: 'einrichtung', title: 'Einrichtung & Lagerung', items: [
+      'Keine brennbaren Materialien in Fluchtwegen',
+      'Keine unnötigen Kartonagen',
+      'Papier-/Materiallagerung ordentlich',
+      'Keine offensichtlich überhöhte Brandlast',
+      'Brennbare Materialien nicht unmittelbar neben Wärmequellen',
+      'Abfallbehälter nicht überfüllt',
+      'Abfälle werden regelmäßig entfernt',
+      'Keine Lagerung vor Elektroverteilungen',
+      'Keine Lagerung vor Heiz-/Wärmequellen',
+      'Keine Zwischenlagerung in Fluren',
+      'Geräte und Materialien standsicher gelagert'
+    ]},
+    { id: 'elektro', title: 'Elektrische Geräte – Sichtprüfung', items: [
+      'Keine offensichtlich beschädigten Kabel',
+      'Keine offensichtlich beschädigten Stecker',
+      'Keine überlasteten Mehrfachsteckdosen',
+      'Keine Steckdosenleisten hintereinander geschaltet',
+      'Keine improvisierten Elektroinstallationen',
+      'Keine offensichtlichen Überhitzungs-/Schmorstellen',
+      'Ladegeräte/Akkus äußerlich unbeschädigt',
+      'Elektrogeräte nicht mit brennbaren Materialien abgedeckt',
+      'Prüfkennzeichnungen / Prüfstatus vorhanden, soweit vorgesehen'
+    ], hint: 'Nur Sichtprüfung; keine elektrotechnische Fachprüfung.' },
+    { id: 'waerme', title: 'Wärmequellen & Geräte', items: [
+      'Öfen/Heizgeräte bestimmungsgemäß aufgestellt',
+      'Keine brennbaren Materialien unmittelbar daneben',
+      'Keine offensichtlichen Beschädigungen',
+      'Abschaltmöglichkeiten bekannt',
+      'Geräte nach Nutzung entsprechend Vorgabe ausgeschaltet',
+      'Keine offensichtlichen Überhitzungs-/Schmorstellen',
+      'Lüftungsöffnungen frei',
+      'Keramik-/Sinteröfen, Polymerisationsgeräte, Dampfgeräte, Wärmeplatten etc. berücksichtigt'
+    ]},
+    { id: 'gefahrstoffe', title: 'Gefahrstoffe & brennbare Flüssigkeiten', items: [
+      'Behälter eindeutig gekennzeichnet',
+      'Behälter verschlossen',
+      'Keine offensichtlichen Leckagen',
+      'Keine Lagerung in Fluchtwegen',
+      'Brennbare Flüssigkeiten nicht unmittelbar neben Zündquellen',
+      'Vorräte ordnungsgemäß gelagert',
+      'Keine unbekannten/unbeschrifteten Flüssigkeiten',
+      'Gefahrstoffabfälle ordnungsgemäß gesammelt',
+      'Sicherheitsdatenblätter / Betriebsanweisungen vorhanden, soweit erforderlich'
+    ]},
+    { id: 'labor', title: 'Labor / Werkstatt / 3D-Druck', items: [
+      'Arbeitsbereich ordentlich',
+      'Wärmequellen zugänglich',
+      'Keine brennbaren Materialien unmittelbar an Wärmequellen',
+      'Arbeitsumgebung sauber',
+      'Absaug-/Lüftungsöffnungen frei',
+      'Materiallagerung ordentlich',
+      'Filament/Resin/sonstige Materialien geeignet gelagert',
+      'IPA/Reinigungsmittel sicher gelagert',
+      'Abfälle ordnungsgemäß entsorgt',
+      'Geräte nach Nutzung entsprechend Vorgabe ausgeschaltet',
+      'Unbeaufsichtigter Betrieb geregelt'
+    ]},
+    { id: 'organisation', title: 'Organisation & Personal', items: [
+      'Notrufnummer bekannt',
+      'Auslösung des Feueralarms bekannt',
+      'Fluchtweg bekannt', 'Sammelstelle bekannt',
+      'Brandschutzhelfer bekannt',
+      'Aufgaben bei Evakuierung bekannt',
+      'Neue Mitarbeitende unterwiesen',
+      'Relevante Betriebsanweisungen verfügbar',
+      'Mängel aus vorherigen Begehungen bearbeitet'
+    ]},
+    { id: 'klinik', title: 'Klinik / Behandlung / Patienten', items: [
+      'Patienten erreichen vorgesehene Fluchtwege',
+      'Patientenliegen/Rollstühle blockieren keine Fluchtwege',
+      'Evakuierung nicht gehfähiger Patienten geregelt',
+      'Verhalten während der Behandlung bekannt',
+      'Behandlungseinheiten können im Notfall verlassen werden',
+      'Zuständigkeit für Patientenrettung bekannt',
+      'Alarmierungsverfahren der Klinik bekannt'
+    ]}
+  ];
+
+  const PRUEF_ROWS = [
+    'Brandmeldeanlage','Feuerlöscher','Sicherheits-/Notbeleuchtung',
+    'Rauchabzug / Entrauchung','Feststellanlagen','Elektrische Anlagen',
+    'Relevante Arbeitsmittel','Druckbehälter','Sonstige Brandschutzeinrichtungen'
+  ];
+
+  // STATE
+  let state = {
+    department: 'Klinik für Radiologie',
+    director: 'Prof. Dr. med. Maria Schmidt',
+    officers: ['Dr. med. Anna Weber', 'Thomas Schmidt'],
+    generalCategory: { title: 'Allgemeine Brandschutzpunkte', items: [] },
+    generalResponses: {},
+    subDepartments: [],
+    responses: {}
+  };
+
+  // HELPERS
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+  function escapeHtml(text) {
+    if (text == null) return '';
+    return String(text).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+  }
+
+  function generateId() {
+    return 'x_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+  }
+
+  function itemKey(catId, idx) { return catId + '__' + idx; }
+  function customKey(catId, itemId) { return 'custom__' + catId + '__' + itemId; }
+  function generalKey(itemId) { return 'general__' + itemId; }
+
+  function getMetaStore(subId) {
+    if (!state.responses[subId]) state.responses[subId] = {};
+    if (!state.responses[subId].__meta) {
+      state.responses[subId].__meta = {
+        bewertung: '', prioritaet: '', pruef: {},
+        deletedCategories: {}, customItems: {}
+      };
+    }
+    const m = state.responses[subId].__meta;
+    if (!m.deletedCategories) m.deletedCategories = {};
+    if (!m.pruef) m.pruef = {};
+    if (!m.customItems) m.customItems = {};
+    return m;
+  }
+
+  function getCustomItems(subId, catId) {
+    const meta = getMetaStore(subId);
+    if (!meta.customItems[catId]) meta.customItems[catId] = [];
+    return meta.customItems[catId];
+  }
+
+  function getItemState(subId, key) {
+    if (!state.responses[subId]) state.responses[subId] = {};
+    if (!state.responses[subId][key]) {
+      state.responses[subId][key] = { checked: false, comment: '', images: [], removed: false };
+    }
+    return state.responses[subId][key];
+  }
+
+  function getGeneralResponse(key) {
+    if (!state.generalResponses) state.generalResponses = {};
+    if (!state.generalResponses[key]) {
+      state.generalResponses[key] = { checked: false, comment: '', images: [], removed: false };
+    }
+    return state.generalResponses[key];
+  }
+
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function save() {
+    try { localStorage.setItem('brandschutzDossier_v7', JSON.stringify(state)); } catch(e) {}
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem('brandschutzDossier_v7');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') state = Object.assign(state, parsed);
+    } catch(e) {}
+  }
+
+  // UNTERABTEILUNGS-LISTE
+  function renderSubList() {
+    const container = $('#subListContainer');
+    if (!state.subDepartments.length) {
+      container.innerHTML = '<p class="text-muted" style="padding:0.5rem 0;">Noch keine Unterabteilungen angelegt.</p>';
+      return;
+    }
+    container.innerHTML = state.subDepartments.map(sub => `
+      <div class="sub-item" data-id="${sub.id}">
+        <div class="sub-info">
+          <strong>${escapeHtml(sub.name) || '–'}</strong>
+          <span>${escapeHtml(sub.building) || '–'}</span>
+          <span class="badge">${escapeHtml(sub.date) || 'kein Datum'}</span>
+        </div>
+        <button class="btn btn-sm btn-danger remove-sub" data-id="${sub.id}">Entfernen</button>
+      </div>
+    `).join('');
+
+    $$('.remove-sub').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.currentTarget.dataset.id;
+        state.subDepartments = state.subDepartments.filter(s => s.id !== id);
+        delete state.responses[id];
+        save();
+        renderSubList();
+        renderDossier();
+      });
+    });
+  }
+
+  // ALLGEMEINE PUNKTE — Editor-Liste mit voller Funktionalität
+  function renderGeneralItemsEditor() {
+    const container = $('#generalItemsList');
+    if (!container) return;
+    if (!state.generalCategory.items.length) {
+      container.innerHTML = '<p class="text-muted" style="padding:0.4rem 0;">Noch keine allgemeinen Punkte angelegt.</p>';
+      return;
+    }
+
+    container.innerHTML = state.generalCategory.items.map(item => {
+      const key = generalKey(item.id);
+      const st = getGeneralResponse(key);
+      const removedClass = st.removed ? ' item-removed' : '';
+      const removeIcon = st.removed ? '↺' : '✕';
+      const commentVisible = (st.comment && st.comment.trim()) ? ' visible' : '';
+      return `
+        <div class="general-editor-item check-item custom-item${removedClass}"
+             data-general-key="${key}" data-general-id="${item.id}">
+          <div class="item-main">
+            <input type="checkbox" ${st.checked ? 'checked' : ''}>
+            <input type="text" class="general-item-text" value="${escapeHtml(item.text)}" placeholder="Punkt">
+            <span class="item-tools">
+              <button class="tool-btn toggle-comment" title="Kommentar">💬</button>
+              <button class="tool-btn add-image" title="Bild anhängen">🖼️</button>
+              <button class="tool-btn toggle-remove ${st.removed ? 'active' : ''}" title="${st.removed ? 'Wiederherstellen' : 'Punkt ausblenden'}">${removeIcon}</button>
+              <button class="tool-btn danger delete-general" title="Punkt endgültig löschen">🗑</button>
+            </span>
+            <input type="file" class="image-input hidden" accept="image/*" multiple>
+          </div>
+          <div class="comment-box${commentVisible}">
+            <textarea placeholder="Kommentar / Bemerkung …">${escapeHtml(st.comment || '')}</textarea>
+          </div>
+          <div class="image-strip"></div>
+        </div>
+      `;
+    }).join('');
+
+    // Events verdrahten
+    container.querySelectorAll('.general-editor-item').forEach(el => {
+      const key = el.dataset.generalKey;
+      const itemId = el.dataset.generalId;
+      const st = getGeneralResponse(key);
+
+      // Text-Input
+      const textInput = el.querySelector('.general-item-text');
+      textInput.addEventListener('input', () => {
+        const it = state.generalCategory.items.find(i => i.id === itemId);
+        if (it) {
+          it.text = textInput.value;
+          save();
+          // Dossier aktualisieren (ohne Fokus zu verlieren)
+          scheduleDossierUpdate();
+        }
+      });
+
+      // Checkbox
+      const cb = el.querySelector('input[type="checkbox"]');
+      cb.checked = st.checked;
+      cb.addEventListener('change', () => { st.checked = cb.checked; save(); scheduleDossierUpdate(); });
+
+      // Kommentar
+      const commentBtn = el.querySelector('.toggle-comment');
+      const commentBox = el.querySelector('.comment-box');
+      const textarea = commentBox.querySelector('textarea');
+      if (st.comment && st.comment.trim()) commentBox.classList.add('visible');
+
+      commentBtn.addEventListener('click', () => {
+        commentBox.classList.toggle('visible');
+        commentBtn.classList.toggle('active');
+        if (commentBox.classList.contains('visible')) textarea.focus();
+      });
+
+      textarea.addEventListener('input', () => {
+        st.comment = textarea.value;
+        save();
+        scheduleDossierUpdate();
+      });
+
+      // Bild
+      const imgBtn = el.querySelector('.add-image');
+      const fileInput = el.querySelector('.image-input');
+      imgBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        const files = Array.from(fileInput.files || []);
+        if (!files.length) return;
+        let pending = files.length;
+        files.forEach(file => {
+          if (!file.type.startsWith('image/')) { pending--; return; }
+          const reader = new FileReader();
+          reader.onload = ev => {
+            st.images = st.images || [];
+            st.images.push(ev.target.result);
+            save();
+            renderGeneralImageStripEditor(el, key);
+            scheduleDossierUpdate();
+            if (--pending === 0) toast('Bilder hinzugefügt.');
+          };
+          reader.readAsDataURL(file);
+        });
+        fileInput.value = '';
+      });
+
+      // Remove (ausblenden)
+      const removeBtn = el.querySelector('.toggle-remove');
+      if (st.removed) el.classList.add('item-removed');
+      removeBtn.addEventListener('click', () => {
+        st.removed = !st.removed;
+        el.classList.toggle('item-removed', st.removed);
+        removeBtn.classList.toggle('active', st.removed);
+        removeBtn.textContent = st.removed ? '↺' : '✕';
+        save();
+        scheduleDossierUpdate();
+      });
+
+      // Delete (endgültig)
+      const deleteBtn = el.querySelector('.delete-general');
+      deleteBtn.addEventListener('click', () => {
+        if (!confirm('Diesen allgemeinen Punkt endgültig löschen?')) return;
+        state.generalCategory.items = state.generalCategory.items.filter(i => i.id !== itemId);
+        delete state.generalResponses[key];
+        save();
+        renderGeneralItemsEditor();
+        renderDossier();
+        toast('Punkt gelöscht.');
+      });
+
+      // Bild-Strip initial
+      renderGeneralImageStripEditor(el, key);
+    });
+  }
+
+  function renderGeneralImageStripEditor(itemEl, key) {
+    let strip = itemEl.querySelector('.image-strip');
+    if (!strip) {
+      strip = document.createElement('div');
+      strip.className = 'image-strip';
+      itemEl.appendChild(strip);
+    }
+    const st = getGeneralResponse(key);
+    const imgs = st.images || [];
+    if (!imgs.length) { strip.innerHTML = ''; return; }
+
+    strip.innerHTML = imgs.map((src, i) => `
+      <div class="image-thumb">
+        <img src="${src}" alt="Anhang">
+        <button class="remove-img" data-idx="${i}" title="Bild entfernen">✕</button>
+      </div>
+    `).join('');
+
+    strip.querySelectorAll('.remove-img').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const i = parseInt(btn.dataset.idx, 10);
+        st.images.splice(i, 1);
+        save();
+        renderGeneralImageStripEditor(itemEl, key);
+        scheduleDossierUpdate();
+      });
+    });
+
+    // Bild-Klick → Lightbox
+    strip.querySelectorAll('img').forEach(img => {
+      img.addEventListener('click', () => {
+        $('#viewerImg').src = img.src;
+        $('#imageViewer').classList.add('open');
+      });
+    });
+  }
+
+  // Dossier-Update entkoppeln (verhindert Fokusverlust bei Tippen)
+  let dossierUpdateTimer = null;
+  function scheduleDossierUpdate() {
+    if (dossierUpdateTimer) return;
+    dossierUpdateTimer = setTimeout(() => {
+      dossierUpdateTimer = null;
+      renderDossier();
+    }, 200);
+  }
+
+  // DOSSIER RENDERN
+  function renderDossier() {
+    const wrap = $('#dossierContent');
+    const dept = state.department || 'Abteilung';
+    const director = (state.director || '').trim();
+    const officers = (state.officers || []).filter(o => o && o.trim());
+
+    let titleHtml = `
+      <div class="title-page">
+        <img src="logo.png" alt="Logo" class="title-logo" onerror="this.style.display='none'">
+        <div class="dept-big">${escapeHtml(dept)}</div>
+        <div class="subtitle">Brandschutz-Dossier · Begehungschecklisten</div>
+
+        <div class="signature-section">
+          ${director ? `
+            <div class="sig-director">
+              <div class="sig-role">Direktor:in der Abteilung</div>
+              <div class="sig-name">${escapeHtml(director)}</div>
+              <div class="sig-line"></div>
+              <div class="sig-caption">Datum, Unterschrift</div>
+            </div>
+          ` : ''}
+
+          ${officers.length ? `
+            <div class="sig-bsb-grid">
+              ${officers.map(o => `
+                <div class="sig-block">
+                  <div class="sig-role">Brandschutzbeauftragte:r</div>
+                  <div class="sig-name">${escapeHtml(o)}</div>
+                  <div class="sig-line"></div>
+                  <div class="sig-caption">Datum, Unterschrift</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+
+    // Allgemeine Kategorie
+    let generalHtml = '';
+    const generalItems = (state.generalCategory.items || []).filter(it => it && it.text && it.text.trim());
+    if (generalItems.length) {
+      const title = state.generalCategory.title || 'Allgemeine Brandschutzpunkte';
+      generalHtml += `
+        <div class="checklist-block general-block" data-general="1">
+          <div class="checklist-header">
+            <div class="doc-label">Allgemeine Checkliste</div>
+            <h3 class="sub-name">${escapeHtml(title)}</h3>
+            <div class="sub-meta">
+              <span><strong>Geltungsbereich</strong> Alle Unterabteilungen</span>
+            </div>
+          </div>
+          <div class="checklist-body">
+            <ul class="check-items">
+              ${generalItems.map(it => {
+                const key = generalKey(it.id);
+                const st = getGeneralResponse(key);
+                if (st.removed) return '';
+                const removeIcon = st.removed ? '↺' : '✕';
+                return `
+                  <li class="check-item custom-item${st.removed ? ' item-removed' : ''}"
+                      data-general-key="${key}" data-general-id="${it.id}">
+                    <div class="item-main">
+                      <input type="checkbox" ${st.checked ? 'checked' : ''}>
+                      <span class="item-text">${escapeHtml(it.text)}</span>
+                      <span class="item-tools">
+                        <button class="tool-btn toggle-comment" title="Kommentar">💬</button>
+                        <button class="tool-btn add-image" title="Bild anhängen">🖼️</button>
+                        <button class="tool-btn toggle-remove ${st.removed ? 'active' : ''}" title="${st.removed ? 'Wiederherstellen' : 'Punkt ausblenden'}">${removeIcon}</button>
+                      </span>
+                      <input type="file" class="image-input hidden" accept="image/*" multiple>
+                    </div>
+                    <div class="comment-box">
+                      <textarea placeholder="Kommentar / Bemerkung …"></textarea>
+                    </div>
+                    <div class="image-strip"></div>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    // Unterabteilungen
+    let subsHtml = '';
+    if (!state.subDepartments.length && !generalItems.length) {
+      subsHtml = `<p class="text-muted" style="text-align:center; padding:2rem;">Keine Inhalte vorhanden.</p>`;
+    } else {
+      state.subDepartments.forEach(sub => { subsHtml += renderChecklist(sub); });
+    }
+
+    wrap.innerHTML = titleHtml + generalHtml + subsHtml;
+
+    // ---- Events im Dossier: Allgemeine Punkte ----
+    wrap.querySelectorAll('[data-general-key]').forEach(el => {
+      const key = el.dataset.generalKey;
+      const st = getGeneralResponse(key);
+
+      const cb = el.querySelector('input[type="checkbox"]');
+      cb.checked = st.checked;
+      cb.addEventListener('change', () => { st.checked = cb.checked; save(); syncGeneralEditor(); });
+
+      const commentBtn = el.querySelector('.toggle-comment');
+      const commentBox = el.querySelector('.comment-box');
+      const textarea = commentBox.querySelector('textarea');
+      textarea.value = st.comment || '';
+      if (st.comment && st.comment.trim()) commentBox.classList.add('visible');
+
+      commentBtn.addEventListener('click', () => {
+        commentBox.classList.toggle('visible');
+        commentBtn.classList.toggle('active');
+        if (commentBox.classList.contains('visible')) textarea.focus();
+      });
+
+      textarea.addEventListener('input', () => {
+        st.comment = textarea.value;
+        save();
+        syncGeneralEditorComment(key, textarea.value);
+      });
+
+      const imgBtn = el.querySelector('.add-image');
+      const fileInput = el.querySelector('.image-input');
+      imgBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        const files = Array.from(fileInput.files || []);
+        if (!files.length) return;
+        let pending = files.length;
+        files.forEach(file => {
+          if (!file.type.startsWith('image/')) { pending--; return; }
+          const reader = new FileReader();
+          reader.onload = ev => {
+            st.images = st.images || [];
+            st.images.push(ev.target.result);
+            save();
+            renderImageStripGeneralDossier(el, key);
+            syncGeneralEditorImages(key);
+            if (--pending === 0) toast('Bilder hinzugefügt.');
+          };
+          reader.readAsDataURL(file);
+        });
+        fileInput.value = '';
+      });
+
+      const removeBtn = el.querySelector('.toggle-remove');
+      if (st.removed) el.classList.add('item-removed');
+      removeBtn.addEventListener('click', () => {
+        st.removed = !st.removed;
+        el.classList.toggle('item-removed', st.removed);
+        removeBtn.classList.toggle('active', st.removed);
+        removeBtn.textContent = st.removed ? '↺' : '✕';
+        save();
+        syncGeneralEditor();
+      });
+
+      renderImageStripGeneralDossier(el, key);
+    });
+
+    // ---- Events: Unterabteilungen ----
+    state.subDepartments.forEach(sub => {
+      const block = wrap.querySelector(`.checklist-block[data-sub="${sub.id}"]`);
+      if (!block) return;
+
+      const metaStore = getMetaStore(sub.id);
+
+      block.querySelectorAll('.meta-radio').forEach(radio => {
+        const key = radio.dataset.meta;
+        if (metaStore[key] === radio.value) radio.checked = true;
+        radio.addEventListener('change', () => { metaStore[key] = radio.value; save(); });
+      });
+
+      block.querySelectorAll('.check-item').forEach(el => {
+        const subId = sub.id;
+        let key;
+        if (el.dataset.custom === '1') {
+          key = customKey(el.dataset.cat, el.dataset.itemId);
+        } else {
+          key = itemKey(el.dataset.cat, el.dataset.idx);
+        }
+        const st = getItemState(subId, key);
+
+        const cb = el.querySelector('input[type="checkbox"]');
+        cb.checked = st.checked;
+        cb.addEventListener('change', () => { st.checked = cb.checked; save(); });
+
+        const commentBtn = el.querySelector('.toggle-comment');
+        const commentBox = el.querySelector('.comment-box');
+        const textarea = commentBox.querySelector('textarea');
+        textarea.value = st.comment || '';
+        if (st.comment && st.comment.trim()) commentBox.classList.add('visible');
+
+        commentBtn.addEventListener('click', () => {
+          commentBox.classList.toggle('visible');
+          commentBtn.classList.toggle('active');
+          if (commentBox.classList.contains('visible')) textarea.focus();
+        });
+
+        textarea.addEventListener('input', () => { st.comment = textarea.value; save(); });
+
+        const imgBtn = el.querySelector('.add-image');
+        const fileInput = el.querySelector('.image-input');
+        imgBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+          const files = Array.from(fileInput.files || []);
+          if (!files.length) return;
+          let pending = files.length;
+          files.forEach(file => {
+            if (!file.type.startsWith('image/')) { pending--; return; }
+            const reader = new FileReader();
+            reader.onload = ev => {
+              st.images = st.images || [];
+              st.images.push(ev.target.result);
+              save();
+              renderImageStripSub(el, subId, key);
+              if (--pending === 0) toast('Bilder hinzugefügt.');
+            };
+            reader.readAsDataURL(file);
+          });
+          fileInput.value = '';
+        });
+
+        const removeBtn = el.querySelector('.toggle-remove');
+        if (st.removed) el.classList.add('item-removed');
+        removeBtn.addEventListener('click', () => {
+          st.removed = !st.removed;
+          el.classList.toggle('item-removed', st.removed);
+          removeBtn.classList.toggle('active', st.removed);
+          removeBtn.textContent = st.removed ? '↺' : '✕';
+          save();
+        });
+
+        renderImageStripSub(el, subId, key);
+      });
+
+      block.querySelectorAll('.toggle-cat').forEach(btn => {
+        const catId = btn.dataset.cat;
+        const catEl = btn.closest('.category');
+        if (metaStore.deletedCategories[catId]) catEl.classList.add('cat-removed');
+
+        btn.addEventListener('click', () => {
+          metaStore.deletedCategories[catId] = !metaStore.deletedCategories[catId];
+          const isRemoved = !!metaStore.deletedCategories[catId];
+          catEl.classList.toggle('cat-removed', isRemoved);
+          btn.classList.toggle('danger', isRemoved);
+          btn.textContent = isRemoved ? '↺' : '✕';
+          btn.title = isRemoved ? 'Kapitel wiederherstellen' : 'Ganzes Kapitel entfernen';
+          save();
+        });
+      });
+
+      block.querySelectorAll('.add-item-form').forEach(form => {
+        const catId = form.dataset.cat;
+        const input = form.querySelector('input[type="text"]');
+        const addBtn = form.querySelector('button');
+
+        const submit = () => {
+          const text = input.value.trim();
+          if (!text) return;
+          const items = getCustomItems(sub.id, catId);
+          items.push({ id: generateId(), text });
+          save();
+          renderDossier();
+          toast('Punkt hinzugefügt.');
+          setTimeout(() => {
+            const newForm = document.querySelector(`.checklist-block[data-sub="${sub.id}"] .add-item-form[data-cat="${catId}"] input`);
+            if (newForm) newForm.focus();
+          }, 30);
+        };
+
+        addBtn.addEventListener('click', submit);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+      });
+
+      block.querySelectorAll('.delete-custom').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const catId = btn.dataset.cat;
+          const itemId = btn.dataset.itemId;
+          const items = getCustomItems(sub.id, catId);
+          const idx = items.findIndex(i => i.id === itemId);
+          if (idx >= 0) items.splice(idx, 1);
+          delete state.responses[sub.id][customKey(catId, itemId)];
+          save();
+          renderDossier();
+          toast('Punkt gelöscht.');
+        });
+      });
+
+      block.querySelectorAll('.pruef-check').forEach(cb => {
+        const rowIdx = cb.dataset.row;
+        if (!metaStore.pruef[rowIdx]) metaStore.pruef[rowIdx] = { vorhanden: false, frist: false, bemerkung: '' };
+        const row = metaStore.pruef[rowIdx];
+        if (cb.dataset.type === 'vorhanden') cb.checked = row.vorhanden;
+        if (cb.dataset.type === 'frist') cb.checked = row.frist;
+        cb.addEventListener('change', () => {
+          if (cb.dataset.type === 'vorhanden') row.vorhanden = cb.checked;
+          if (cb.dataset.type === 'frist') row.frist = cb.checked;
+          save();
+        });
+      });
+
+      block.querySelectorAll('.pruef-kommentar').forEach(inp => {
+        const rowIdx = inp.dataset.row;
+        if (!metaStore.pruef[rowIdx]) metaStore.pruef[rowIdx] = { vorhanden: false, frist: false, bemerkung: '' };
+        inp.value = metaStore.pruef[rowIdx].bemerkung || '';
+        inp.addEventListener('input', () => {
+          metaStore.pruef[rowIdx].bemerkung = inp.value;
+          save();
+        });
+      });
+    });
+
+    wrap.querySelectorAll('.image-thumb img').forEach(img => {
+      img.addEventListener('click', () => {
+        $('#viewerImg').src = img.src;
+        $('#imageViewer').classList.add('open');
+      });
+    });
+  }
+
+  // Sync: Dossier → Editor (nur Kommentar-Text und Bilder, um Re-Render zu vermeiden)
+  function syncGeneralEditor() {
+    // Checkbox-Zustände und Removed-Status im Editor aktualisieren
+    const editorItems = document.querySelectorAll('#generalItemsList .general-editor-item');
+    editorItems.forEach(el => {
+      const key = el.dataset.generalKey;
+      const st = getGeneralResponse(key);
+      const cb = el.querySelector('input[type="checkbox"]');
+      if (cb && cb.checked !== st.checked) cb.checked = st.checked;
+      el.classList.toggle('item-removed', st.removed);
+      const removeBtn = el.querySelector('.toggle-remove');
+      if (removeBtn) {
+        removeBtn.classList.toggle('active', st.removed);
+        removeBtn.textContent = st.removed ? '↺' : '✕';
+      }
+    });
+  }
+
+  function syncGeneralEditorComment(key, commentText) {
+    const editorEl = document.querySelector(`#generalItemsList .general-editor-item[data-general-key="${key}"]`);
+    if (!editorEl) return;
+    const ta = editorEl.querySelector('.comment-box textarea');
+    if (ta && ta.value !== commentText) ta.value = commentText;
+    const cb = editorEl.querySelector('.comment-box');
+    if (cb && commentText && commentText.trim()) cb.classList.add('visible');
+  }
+
+  function syncGeneralEditorImages(key) {
+    const editorEl = document.querySelector(`#generalItemsList .general-editor-item[data-general-key="${key}"]`);
+    if (!editorEl) return;
+    renderGeneralImageStripEditor(editorEl, key);
+  }
+
+  function renderImageStripGeneralDossier(itemEl, key) {
+    let strip = itemEl.querySelector('.image-strip');
+    if (!strip) {
+      strip = document.createElement('div');
+      strip.className = 'image-strip';
+      itemEl.appendChild(strip);
+    }
+    const st = getGeneralResponse(key);
+    const imgs = st.images || [];
+    if (!imgs.length) { strip.innerHTML = ''; return; }
+
+    strip.innerHTML = imgs.map((src, i) => `
+      <div class="image-thumb">
+        <img src="${src}" alt="Anhang">
+        <button class="remove-img" data-idx="${i}" title="Bild entfernen">✕</button>
+      </div>
+    `).join('');
+
+    strip.querySelectorAll('.remove-img').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const i = parseInt(btn.dataset.idx, 10);
+        st.images.splice(i, 1);
+        save();
+        renderImageStripGeneralDossier(itemEl, key);
+        syncGeneralEditorImages(key);
+      });
+    });
+  }
+
+  function renderImageStripSub(itemEl, subId, key) {
+    let strip = itemEl.querySelector('.image-strip');
+    if (!strip) {
+      strip = document.createElement('div');
+      strip.className = 'image-strip';
+      itemEl.appendChild(strip);
+    }
+    const st = getItemState(subId, key);
+    const imgs = st.images || [];
+    if (!imgs.length) { strip.innerHTML = ''; return; }
+
+    strip.innerHTML = imgs.map((src, i) => `
+      <div class="image-thumb">
+        <img src="${src}" alt="Anhang">
+        <button class="remove-img" data-idx="${i}" title="Bild entfernen">✕</button>
+      </div>
+    `).join('');
+
+    strip.querySelectorAll('.remove-img').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const i = parseInt(btn.dataset.idx, 10);
+        st.images.splice(i, 1);
+        save();
+        renderImageStripSub(itemEl, subId, key);
+      });
+    });
+  }
+
+  function renderChecklist(sub) {
+    const name = escapeHtml(sub.name) || 'Unbenannte Unterabteilung';
+    const building = escapeHtml(sub.building) || '– nicht angegeben –';
+    const date = escapeHtml(sub.date) || '– kein Datum –';
+    const meta = getMetaStore(sub.id);
+
+    let html = `
+      <div class="checklist-block" data-sub="${sub.id}">
+        <div class="checklist-header">
+          <div class="doc-label">Brandschutzbegehung · Checkliste</div>
+          <h3 class="sub-name">${name}</h3>
+          <div class="sub-meta">
+            <span><strong>Gebäude / Etage</strong> ${building}</span>
+            <span><strong>Datum</strong> ${date}</span>
+          </div>
+        </div>
+        <div class="checklist-body">
+          <div class="meta-row">
+            <div class="meta-group">
+              <span class="meta-label">Bewertung</span>
+              <div class="options">
+                ${['OK','Mangel','n. z.','nicht geprüft'].map(v => `
+                  <label><input type="radio" name="bw_${sub.id}" class="meta-radio" data-meta="bewertung" value="${v}" ${meta.bewertung === v ? 'checked' : ''}><span>${v}</span></label>
+                `).join('')}
+              </div>
+            </div>
+            <div class="meta-group">
+              <span class="meta-label">Priorität</span>
+              <div class="options">
+                ${[['sofort','🔴 sofort'],['hoch','🟠 hoch'],['mittel','🟡 mittel'],['gering','🟢 gering']].map(([v,l]) => `
+                  <label><input type="radio" name="pr_${sub.id}" class="meta-radio" data-meta="prioritaet" value="${v}" ${meta.prioritaet === v ? 'checked' : ''}><span>${l}</span></label>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+    `;
+
+    CATEGORIES.forEach(cat => {
+      const catRemoved = meta.deletedCategories[cat.id] ? ' cat-removed' : '';
+      html += `
+        <div class="category${catRemoved}" data-cat="${cat.id}">
+          <div class="category-header">
+            <h4>${escapeHtml(cat.title)}</h4>
+            <div class="cat-tools">
+              <button class="tool-btn toggle-cat ${meta.deletedCategories[cat.id] ? 'danger' : ''}"
+                      data-cat="${cat.id}"
+                      title="${meta.deletedCategories[cat.id] ? 'Kapitel wiederherstellen' : 'Ganzes Kapitel entfernen'}">
+                ${meta.deletedCategories[cat.id] ? '↺' : '✕'}
+              </button>
+            </div>
+          </div>
+          <ul class="check-items">
+      `;
+      cat.items.forEach((item, idx) => {
+        const key = itemKey(cat.id, idx);
+        const st = getItemState(sub.id, key);
+        const removeIcon = st.removed ? '↺' : '✕';
+        html += `
+          <li class="check-item${st.removed ? ' item-removed' : ''}"
+              data-sub="${sub.id}" data-cat="${cat.id}" data-idx="${idx}">
+            <div class="item-main">
+              <input type="checkbox" ${st.checked ? 'checked' : ''}>
+              <span class="item-text">${escapeHtml(item)}</span>
+              <span class="item-tools">
+                <button class="tool-btn toggle-comment" title="Kommentar">💬</button>
+                <button class="tool-btn add-image" title="Bild anhängen">🖼️</button>
+                <button class="tool-btn toggle-remove ${st.removed ? 'active' : ''}" title="${st.removed ? 'Wiederherstellen' : 'Punkt ausblenden'}">${removeIcon}</button>
+              </span>
+              <input type="file" class="image-input hidden" accept="image/*" multiple>
+            </div>
+            <div class="comment-box">
+              <textarea placeholder="Kommentar / Bemerkung zu diesem Punkt …"></textarea>
+            </div>
+            <div class="image-strip"></div>
+          </li>
+        `;
+      });
+
+      const customs = getCustomItems(sub.id, cat.id);
+      customs.forEach(custom => {
+        const key = customKey(cat.id, custom.id);
+        const st = getItemState(sub.id, key);
+        const removeIcon = st.removed ? '↺' : '✕';
+        html += `
+          <li class="check-item custom-item${st.removed ? ' item-removed' : ''}"
+              data-sub="${sub.id}" data-cat="${cat.id}" data-custom="1" data-item-id="${custom.id}">
+            <div class="item-main">
+              <input type="checkbox" ${st.checked ? 'checked' : ''}>
+              <span class="item-text">${escapeHtml(custom.text)}</span>
+              <span class="item-tools">
+                <button class="tool-btn toggle-comment" title="Kommentar">💬</button>
+                <button class="tool-btn add-image" title="Bild anhängen">🖼️</button>
+                <button class="tool-btn toggle-remove ${st.removed ? 'active' : ''}" title="${st.removed ? 'Wiederherstellen' : 'Punkt ausblenden'}">${removeIcon}</button>
+                <button class="tool-btn danger delete-custom" data-cat="${cat.id}" data-item-id="${custom.id}" title="Punkt endgültig löschen">🗑</button>
+              </span>
+              <input type="file" class="image-input hidden" accept="image/*" multiple>
+            </div>
+            <div class="comment-box">
+              <textarea placeholder="Kommentar / Bemerkung zu diesem Punkt …"></textarea>
+            </div>
+            <div class="image-strip"></div>
+          </li>
+        `;
+      });
+
+      html += `</ul>`;
+
+      html += `
+        <div class="add-item-form" data-cat="${cat.id}">
+          <input type="text" placeholder="Weiteren Punkt hinzufügen …">
+          <button type="button">＋</button>
+        </div>
+      `;
+
+      if (cat.hint) html += `<div class="info-box">💡 ${escapeHtml(cat.hint)}</div>`;
+      html += `</div>`;
+    });
+
+    let tableRows = '';
+    PRUEF_ROWS.forEach((row, i) => {
+      const r = meta.pruef[i] || { vorhanden: false, frist: false, bemerkung: '' };
+      tableRows += `
+        <tr>
+          <td>${escapeHtml(row)}</td>
+          <td><input type="checkbox" class="pruef-check" data-sub="${sub.id}" data-row="${i}" data-type="vorhanden" ${r.vorhanden ? 'checked' : ''}></td>
+          <td><input type="checkbox" class="pruef-check" data-sub="${sub.id}" data-row="${i}" data-type="frist" ${r.frist ? 'checked' : ''}></td>
+          <td><input type="text" class="kommentar-input pruef-kommentar" data-sub="${sub.id}" data-row="${i}" value="${escapeHtml(r.bemerkung || '')}" placeholder="Bemerkung …"></td>
+        </tr>
+      `;
+    });
+
+    html += `
+          <div class="category" data-cat="fachpruefungen">
+            <div class="category-header">
+              <h4>Fachprüfungen – Nachweise</h4>
+            </div>
+            <table class="pruef-table">
+              <thead>
+                <tr><th>Prüfung / Anlage</th><th>Nachweis vorhanden</th><th>Frist aktuell</th><th>Mangel / Bemerkung</th></tr>
+              </thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+            <div class="footnote">Grundsatz: Es wird nur geprüft, ob ein gültiger Prüfnachweis vorhanden ist. Keine technische Fachprüfung durch den Begeher.</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  // EVENTS
+  function bindStammdaten() {
+    $('#deptName').addEventListener('input', e => { state.department = e.target.value; save(); scheduleDossierUpdate(); });
+    $('#director').addEventListener('input', e => { state.director = e.target.value; save(); scheduleDossierUpdate(); });
+    $('#officer1').addEventListener('input', e => { state.officers[0] = e.target.value; save(); scheduleDossierUpdate(); });
+    $('#officer2').addEventListener('input', e => { state.officers[1] = e.target.value; save(); scheduleDossierUpdate(); });
+    $('#generalTitle').addEventListener('input', e => {
+      state.generalCategory.title = e.target.value;
+      save();
+      scheduleDossierUpdate();
+    });
+  }
+
+  function bindAddSub() {
+    $('#addSubBtn').addEventListener('click', () => {
+      const name = $('#subName').value.trim();
+      if (!name) { toast('Bitte eine Unterabteilung angeben.'); return; }
+      const sub = {
+        id: generateId(),
+        name,
+        building: $('#subBuilding').value.trim(),
+        date: $('#subDate').value.trim()
+      };
+      state.subDepartments.push(sub);
+      $('#subName').value = '';
+      $('#subBuilding').value = '';
+      save();
+      renderSubList();
+      renderDossier();
+      toast('Unterabteilung hinzugefügt.');
+    });
+  }
+
+  function bindGeneralItems() {
+    const input = $('#generalNewItem');
+    const btn = $('#addGeneralItemBtn');
+
+    const add = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      state.generalCategory.items.push({ id: generateId(), text });
+      input.value = '';
+      save();
+      renderGeneralItemsEditor();
+      renderDossier();
+      toast('Allgemeiner Punkt hinzugefügt.');
+      input.focus();
+    };
+
+    btn.addEventListener('click', add);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+  }
+
+  function bindToolbar() {
+    $('#printBtn').addEventListener('click', () => {
+      document.querySelectorAll('.check-item, .general-editor-item').forEach(item => {
+        const ta = item.querySelector('.comment-box textarea');
+        if (ta && ta.value.trim()) item.querySelector('.comment-box').classList.add('visible');
+      });
+      window.print();
+    });
+
+    $('#exportBtn').addEventListener('click', () => {
+      const html = buildExportHtml();
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dept = (state.department || 'Dossier').replace(/[^\wäöüÄÖÜß-]+/g, '_');
+      a.href = url;
+      a.download = `Brandschutz-Dossier_${dept}_${new Date().toISOString().slice(0,10)}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      toast('HTML-Dokument exportiert.');
+    });
+
+    $('#resetBtn').addEventListener('click', () => {
+      if (!confirm('Wirklich alle Eingaben, Kommentare und Bilder zurücksetzen?')) return;
+      localStorage.removeItem('brandschutzDossier_v7');
+      state = {
+        department: 'Klinik für Radiologie',
+        director: 'Prof. Dr. med. Maria Schmidt',
+        officers: ['Dr. med. Anna Weber', 'Thomas Schmidt'],
+        generalCategory: { title: 'Allgemeine Brandschutzpunkte', items: [] },
+        generalResponses: {},
+        subDepartments: [
+          { id: generateId(), name: 'MRT 1', building: 'Haus C, Ebene 2', date: '12.05.2025' }
+        ],
+        responses: {}
+      };
+      $('#deptName').value = state.department;
+      $('#director').value = state.director;
+      $('#officer1').value = state.officers[0];
+      $('#officer2').value = state.officers[1];
+      $('#generalTitle').value = state.generalCategory.title;
+      renderSubList();
+      renderGeneralItemsEditor();
+      renderDossier();
+      toast('Zurückgesetzt.');
+    });
+
+    $('#imageViewer').addEventListener('click', () => $('#imageViewer').classList.remove('open'));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') $('#imageViewer').classList.remove('open');
+    });
+  }
+
+  // HTML-EXPORT
+  function buildExportHtml() {
+    const dept = escapeHtml(state.department || 'Abteilung');
+    const director = (state.director || '').trim();
+    const officers = (state.officers || []).filter(o => o && o.trim());
+
+    const exportCss = `
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body { font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+             color:#1a2330; background:#eef3f8; line-height:1.55; padding:2rem 1rem; font-size:15px; -webkit-font-smoothing:antialiased; }
+      .doc { max-width:900px; margin:0 auto; background:#fff; border-radius:20px; padding:3rem 3rem 2rem;
+             box-shadow:0 4px 24px rgba(10,37,64,0.08); }
+      .title-page { text-align:center; padding:3rem 1rem 2rem; border-bottom:1px solid #e2e8f0; margin-bottom:3rem; }
+      .title-page img { max-height:110px; max-width:280px; object-fit:contain; margin:0 auto 2rem; display:block; }
+      .title-page .dept-big { font-size:2.6rem; font-weight:800; color:#0a2540; letter-spacing:-0.03em; line-height:1.1; margin-bottom:0.6rem; }
+      .title-page .subtitle { font-size:0.85rem; color:#6b7c92; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:2.5rem; }
+      .signature-section { max-width:720px; margin:0 auto; text-align:left; display:flex; flex-direction:column; gap:1.75rem; }
+      .sig-director { padding:1rem 1.25rem; background:#f4f8fc; border:1px solid #dbe5ef; border-radius:12px; border-left:4px solid #14507f; }
+      .sig-role { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#14507f; margin-bottom:0.35rem; }
+      .sig-director .sig-role { color:#0f3a5f; font-size:0.72rem; }
+      .sig-name { font-size:1.05rem; font-weight:600; color:#1a2330; margin-bottom:1.1rem; }
+      .sig-director .sig-name { font-size:1.15rem; font-weight:700; color:#0a2540; }
+      .sig-line { border-bottom:1px solid #6b7c92; height:1.4rem; margin-bottom:0.35rem; }
+      .sig-caption { font-size:0.7rem; color:#6b7c92; font-weight:500; letter-spacing:0.04em; }
+      .sig-bsb-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem; }
+      .sig-block { padding:0.9rem 1.1rem; background:#f8fafc; border:1px solid #dbe5ef; border-radius:12px; }
+      .checklist-block { margin-bottom:3rem; page-break-inside:avoid; border:1px solid #dbe5ef; border-radius:18px;
+                         overflow:hidden; background:#fff; box-shadow:0 4px 16px rgba(10,37,64,0.06); }
+      .checklist-block.general-block .checklist-header { background:linear-gradient(135deg,#1e4620 0%,#2f6a37 100%); }
+      .checklist-header { padding:1.5rem 1.6rem 1.25rem; background:linear-gradient(135deg,#0a2540 0%,#14507f 100%); color:#fff; }
+      .checklist-header .doc-label { font-size:0.68rem; font-weight:700; text-transform:uppercase;
+                                     letter-spacing:0.16em; color:rgba(255,255,255,0.6); margin-bottom:0.4rem; }
+      .checklist-header .sub-name { font-size:1.5rem; font-weight:800; letter-spacing:-0.02em; line-height:1.15;
+                                    color:#fff; word-break:break-word; margin-bottom:0.9rem; }
+      .checklist-header .sub-meta { display:flex; flex-wrap:wrap; gap:0.5rem 1.75rem; font-size:0.82rem;
+                                    padding-top:0.85rem; border-top:1px solid rgba(255,255,255,0.18); }
+      .checklist-header .sub-meta span { display:inline-flex; gap:0.45rem; align-items:baseline; }
+      .checklist-header .sub-meta strong { color:rgba(255,255,255,0.6); font-size:0.68rem; font-weight:700;
+                                            text-transform:uppercase; letter-spacing:0.08em; }
+      .checklist-body { padding:1.75rem; }
+      .meta-row { display:flex; flex-wrap:wrap; gap:2rem; margin-bottom:1.75rem; padding-bottom:1.25rem; border-bottom:1px solid #f0f4f8; }
+      .meta-row .meta-group { display:flex; flex-direction:column; gap:0.5rem; }
+      .meta-row .meta-label { font-size:0.68rem; font-weight:700; color:#6b7c92; text-transform:uppercase; letter-spacing:0.08em; }
+      .meta-row .options { display:flex; flex-wrap:wrap; gap:0.4rem; }
+      .meta-row .options span { font-size:0.83rem; padding:0.3rem 0.75rem; border-radius:999px; background:#f4f8fc; border:1px solid #dbe5ef; color:#cbd5e1; font-weight:500; }
+      .meta-row .options span.active { background:#14507f; border-color:#14507f; color:#fff; font-weight:600; }
+      .category { margin-bottom:1.75rem; padding:1.1rem 1.25rem; background:#f8fafc; border-radius:12px; border:1px solid #dbe5ef; }
+      .category-header { padding-bottom:0.5rem; margin-bottom:0.75rem; border-bottom:1.5px solid #0a2540; }
+      .category-header h4 { font-size:0.98rem; font-weight:700; color:#0a2540; }
+      .check-items { list-style:none; display:flex; flex-direction:column; gap:0.35rem; }
+      .check-item { padding:0.5rem 0.6rem; border-radius:8px; background:#fff; border:1px solid transparent; page-break-inside:avoid; }
+      .check-item.custom-item { border-left:3px solid #2f6a37; }
+      .item-main { display:flex; align-items:flex-start; gap:0.6rem; }
+      .item-main input[type="checkbox"] { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#14507f; flex-shrink:0; }
+      .item-text { font-size:0.9rem; line-height:1.5; color:#1a2330; }
+      .comment-box { margin-top:0.45rem; margin-left:1.6rem; }
+      .comment-box .comment-text { border-left:3px solid #14507f; background:#f8fafc; padding:0.5rem 0.8rem; border-radius:0 6px 6px 0; font-size:0.88rem; color:#3a4a5c; white-space:pre-wrap; }
+      .image-strip { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem; margin-left:1.6rem; }
+      .image-strip img { width:220px; height:220px; object-fit:cover; border-radius:10px; border:1px solid #dbe5ef; }
+      .info-box { font-size:0.8rem; color:#6b7c92; margin-top:0.5rem; padding:0.4rem 0.7rem; background:#fff; border-radius:6px; display:inline-block; font-style:italic; }
+      .pruef-table { width:100%; border-collapse:collapse; font-size:0.85rem; background:#fff; border-radius:8px; overflow:hidden; }
+      .pruef-table th { text-align:left; font-weight:700; color:#0a2540; padding:0.6rem 0.75rem; background:#f0f4f8; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; }
+      .pruef-table td { padding:0.55rem 0.75rem; border-bottom:1px solid #f0f4f8; vertical-align:middle; }
+      .pruef-table td input[type="checkbox"] { accent-color:#14507f; width:1rem; height:1rem; }
+      .footnote { font-size:0.78rem; color:#6b7c92; margin-top:0.75rem; padding:0.6rem 0.9rem; background:#fff; border-radius:8px; border-left:3px solid #14507f; font-style:italic; }
+
+      @media print {
+        @page { size:A4; margin:10mm 10mm; }
+        body { background:#fff; padding:0; font-size:9.5pt; line-height:1.28; }
+        .doc { box-shadow:none; padding:0; border-radius:0; max-width:100%; }
+        .title-page { page-break-after:always; padding:2.5cm 1cm 1cm; border-bottom:none; margin-bottom:0; }
+        .title-page img { max-height:110px; max-width:280px; margin-bottom:1.5cm; }
+        .title-page .dept-big { font-size:28pt; }
+        .title-page .subtitle { font-size:10pt; margin-bottom:2.5cm; }
+        .signature-section { max-width:100%; gap:2.5cm; margin-top:3cm; }
+        .sig-director { background:none !important; border:none !important; border-left:none !important; padding:0 !important; }
+        .sig-role { color:#333 !important; font-size:9pt; margin-bottom:0.3cm; }
+        .sig-name { font-size:12pt; color:#000 !important; margin-bottom:1.6cm; }
+        .sig-director .sig-name { font-size:13pt; }
+        .sig-line { border-bottom:1px solid #000 !important; height:1cm; margin-bottom:0.15cm; }
+        .sig-caption { color:#555 !important; font-size:8pt; }
+        .sig-bsb-grid { display:block; }
+        .sig-block { background:none !important; border:none !important; padding:0 !important; margin-bottom:2.5cm; }
+        .sig-block:last-child { margin-bottom:0; }
+        .checklist-block { page-break-before:always; border:none; border-radius:0; margin-bottom:0; box-shadow:none; }
+        .checklist-header { -webkit-print-color-adjust:exact; print-color-adjust:exact;
+                            padding:0.45cm 0.55cm 0.4cm; border-radius:3px 3px 0 0; margin-bottom:0.3cm; }
+        .checklist-block.general-block .checklist-header { background:#1e4620 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        .checklist-header .doc-label { font-size:7pt; margin-bottom:0.12cm; letter-spacing:0.14em; }
+        .checklist-header .sub-name { font-size:16pt; margin-bottom:0.25cm; line-height:1.1; }
+        .checklist-header .sub-meta { font-size:8.5pt; gap:0.15cm 0.8cm; padding-top:0.2cm; border-top:1px solid rgba(255,255,255,0.25); }
+        .checklist-body { padding:0; }
+        .meta-row { -webkit-print-color-adjust:exact; print-color-adjust:exact;
+                    background:#f4f8fc; padding:0.25cm 0.35cm; border-radius:3px;
+                    border-bottom:none; margin-bottom:0.3cm; gap:1cm; }
+        .meta-row .options span { font-size:8.5pt; padding:0.1cm 0.35cm; }
+        .meta-row .options span:not(.active) { display:none; }
+        .meta-row .meta-label { font-size:7.5pt; }
+        .category { background:none; border:none; padding:0; margin-bottom:0.25cm; }
+        .category-header { padding-bottom:0.05cm; margin-bottom:0.1cm; border-bottom:1pt solid #0a2540; }
+        .category-header h4 { font-size:10pt; }
+        .check-item { padding:0.06cm 0.2cm; background:none; border:none; line-height:1.28; }
+        .check-item.custom-item { border-left:none; }
+        .item-text { font-size:9.5pt; line-height:1.28; }
+        .item-main input[type="checkbox"] { width:9pt; height:9pt; margin-top:1.5pt;
+                                            -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        .comment-box { margin-left:0.5cm; margin-top:0.05cm; margin-bottom:0.05cm; }
+        .comment-box .comment-text { -webkit-print-color-adjust:exact; print-color-adjust:exact;
+                                     font-size:8.5pt; padding:0.12cm 0.35cm; line-height:1.3; }
+        .image-strip { gap:0.15cm; margin-left:0.5cm; margin-top:0.1cm; margin-bottom:0.1cm; }
+        .image-strip img { width:4.2cm; height:4.2cm; page-break-inside:avoid; }
+        .pruef-table { -webkit-print-color-adjust:exact; print-color-adjust:exact; font-size:8.5pt; line-height:1.25; }
+        .pruef-table th { -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:0.12cm 0.2cm; font-size:7.5pt; }
+        .pruef-table td { padding:0.1cm 0.2cm; }
+        .pruef-table td input[type="checkbox"] { width:9pt; height:9pt; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        .footnote { font-size:7.5pt; padding:0.15cm 0.3cm; margin-top:0.2cm; }
+        .info-box { font-size:7.5pt; padding:0.12cm 0.3cm; margin-top:0.15cm; }
+      }
+    `;
+
+    let body = `<div class="doc">`;
+
+    body += `
+      <div class="title-page">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+        <div class="dept-big">${dept}</div>
+        <div class="subtitle">Brandschutz-Dossier · Begehungschecklisten</div>
+        <div class="signature-section">
+          ${director ? `
+            <div class="sig-director">
+              <div class="sig-role">Direktor:in der Abteilung</div>
+              <div class="sig-name">${escapeHtml(director)}</div>
+              <div class="sig-line"></div>
+              <div class="sig-caption">Datum, Unterschrift</div>
+            </div>
+          ` : ''}
+          ${officers.length ? `
+            <div class="sig-bsb-grid">
+              ${officers.map(o => `
+                <div class="sig-block">
+                  <div class="sig-role">Brandschutzbeauftragte:r</div>
+                  <div class="sig-name">${escapeHtml(o)}</div>
+                  <div class="sig-line"></div>
+                  <div class="sig-caption">Datum, Unterschrift</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+
+    const generalItems = (state.generalCategory.items || []).filter(it => it && it.text && it.text.trim());
+    if (generalItems.length) {
+      const gTitle = state.generalCategory.title || 'Allgemeine Brandschutzpunkte';
+      body += `
+        <div class="checklist-block general-block">
+          <div class="checklist-header">
+            <div class="doc-label">Allgemeine Checkliste</div>
+            <h3 class="sub-name">${escapeHtml(gTitle)}</h3>
+            <div class="sub-meta">
+              <span><strong>Geltungsbereich</strong> Alle Unterabteilungen</span>
+            </div>
+          </div>
+          <div class="checklist-body">
+            <ul class="check-items">
+      `;
+      generalItems.forEach(it => {
+        const key = generalKey(it.id);
+        const st = getGeneralResponse(key);
+        if (st.removed) return;
+        body += `
+          <li class="check-item custom-item">
+            <div class="item-main">
+              <input type="checkbox" ${st.checked ? 'checked' : ''} disabled>
+              <span class="item-text">${escapeHtml(it.text)}</span>
+            </div>
+        `;
+        if (st.comment && st.comment.trim()) {
+          body += `<div class="comment-box"><div class="comment-text">${escapeHtml(st.comment)}</div></div>`;
+        }
+        if (st.images && st.images.length) {
+          body += `<div class="image-strip">${st.images.map(src => `<img src="${src}" alt="Anhang">`).join('')}</div>`;
+        }
+        body += `</li>`;
+      });
+      body += `</ul></div></div>`;
+    }
+
+    state.subDepartments.forEach(sub => {
+      const meta = getMetaStore(sub.id);
+      body += `<div class="checklist-block">`;
+      body += `
+        <div class="checklist-header">
+          <div class="doc-label">Brandschutzbegehung · Checkliste</div>
+          <h3 class="sub-name">${escapeHtml(sub.name) || 'Unbenannte Unterabteilung'}</h3>
+          <div class="sub-meta">
+            <span><strong>Gebäude / Etage</strong> ${escapeHtml(sub.building) || '– nicht angegeben –'}</span>
+            <span><strong>Datum</strong> ${escapeHtml(sub.date) || '– kein Datum –'}</span>
+          </div>
+        </div>
+        <div class="checklist-body">
+      `;
+
+      const bw = meta.bewertung || '';
+      const pr = meta.prioritaet || '';
+      body += `
+        <div class="meta-row">
+          <div class="meta-group">
+            <div class="meta-label">Bewertung</div>
+            <div class="options">
+              ${['OK','Mangel','n. z.','nicht geprüft'].map(v => `<span class="${bw === v ? 'active' : ''}">${v}</span>`).join('')}
+            </div>
+          </div>
+          <div class="meta-group">
+            <div class="meta-label">Priorität</div>
+            <div class="options">
+              ${[['sofort','🔴 sofort'],['hoch','🟠 hoch'],['mittel','🟡 mittel'],['gering','🟢 gering']].map(([v,l]) => `<span class="${pr === v ? 'active' : ''}">${l}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+
+      CATEGORIES.forEach(cat => {
+        if (meta.deletedCategories[cat.id]) return;
+
+        const visibleItems = cat.items.map((item, idx) => ({ item, idx, key: itemKey(cat.id, idx), st: getItemState(sub.id, itemKey(cat.id, idx)) }))
+                                       .filter(x => !x.st.removed);
+        const customs = (meta.customItems && meta.customItems[cat.id]) ? meta.customItems[cat.id] : [];
+        const visibleCustoms = customs.map(c => ({ text: c.text, key: customKey(cat.id, c.id), st: getItemState(sub.id, customKey(cat.id, c.id)) }))
+                                       .filter(x => !x.st.removed);
+
+        body += `<div class="category">`;
+        body += `<div class="category-header"><h4>${escapeHtml(cat.title)}</h4></div>`;
+
+        if (!visibleItems.length && !visibleCustoms.length) {
+          body += `<p style="font-size:0.85rem;color:#6b7c92;font-style:italic;padding:0.4rem 0;">Keine Punkte in diesem Kapitel.</p>`;
+        } else {
+          body += `<ul class="check-items">`;
+          visibleItems.forEach(({ item, st }) => {
+            body += `
+              <li class="check-item">
+                <div class="item-main">
+                  <input type="checkbox" ${st.checked ? 'checked' : ''} disabled>
+                  <span class="item-text">${escapeHtml(item)}</span>
+                </div>
+            `;
+            if (st.comment && st.comment.trim()) {
+              body += `<div class="comment-box"><div class="comment-text">${escapeHtml(st.comment)}</div></div>`;
+            }
+            if (st.images && st.images.length) {
+              body += `<div class="image-strip">${st.images.map(src => `<img src="${src}" alt="Anhang">`).join('')}</div>`;
+            }
+            body += `</li>`;
+          });
+          visibleCustoms.forEach(({ text, st }) => {
+            body += `
+              <li class="check-item custom-item">
+                <div class="item-main">
+                  <input type="checkbox" ${st.checked ? 'checked' : ''} disabled>
+                  <span class="item-text">${escapeHtml(text)}</span>
+                </div>
+            `;
+            if (st.comment && st.comment.trim()) {
+              body += `<div class="comment-box"><div class="comment-text">${escapeHtml(st.comment)}</div></div>`;
+            }
+            if (st.images && st.images.length) {
+              body += `<div class="image-strip">${st.images.map(src => `<img src="${src}" alt="Anhang">`).join('')}</div>`;
+            }
+            body += `</li>`;
+          });
+          body += `</ul>`;
+        }
+
+        if (cat.hint) body += `<div class="info-box">💡 ${escapeHtml(cat.hint)}</div>`;
+        body += `</div>`;
+      });
+
+      body += `<div class="category">`;
+      body += `<div class="category-header"><h4>Fachprüfungen – Nachweise</h4></div>`;
+      body += `
+        <table class="pruef-table">
+          <thead>
+            <tr><th>Prüfung / Anlage</th><th>Nachweis vorhanden</th><th>Frist aktuell</th><th>Mangel / Bemerkung</th></tr>
+          </thead>
+          <tbody>
+      `;
+      PRUEF_ROWS.forEach((row, i) => {
+        const r = meta.pruef[i] || { vorhanden: false, frist: false, bemerkung: '' };
+        body += `
+          <tr>
+            <td>${escapeHtml(row)}</td>
+            <td><input type="checkbox" ${r.vorhanden ? 'checked' : ''} disabled></td>
+            <td><input type="checkbox" ${r.frist ? 'checked' : ''} disabled></td>
+            <td>${r.bemerkung ? escapeHtml(r.bemerkung) : '<span style="color:#cbd5e1;">–</span>'}</td>
+          </tr>
+        `;
+      });
+      body += `</tbody></table>`;
+      body += `<div class="footnote">Grundsatz: Es wird nur geprüft, ob ein gültiger Prüfnachweis vorhanden ist. Keine technische Fachprüfung durch den Begeher.</div>`;
+      body += `</div>`;
+
+      body += `</div></div>`;
+    });
+
+    body += `</div>`;
+
+    const title = `Brandschutz-Dossier – ${state.department || 'Abteilung'}`;
+
+    return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(title)}</title>
+<style>${exportCss}</style>
+</head>
+<body>
+${body}
+</body>
+</html>`;
+  }
+
+  // INIT
+  function init() {
+    load();
+
+    if (!state.subDepartments) state.subDepartments = [];
+    if (!state.subDepartments.length && !(state.generalCategory && state.generalCategory.items && state.generalCategory.items.length)) {
+      state.subDepartments = [
+        { id: generateId(), name: 'MRT 1', building: 'Haus C, Ebene 2', date: '12.05.2025' }
+      ];
+    }
+    if (!state.responses) state.responses = {};
+    if (!state.generalResponses) state.generalResponses = {};
+    if (!state.generalCategory) state.generalCategory = { title: 'Allgemeine Brandschutzpunkte', items: [] };
+    if (!state.generalCategory.items) state.generalCategory.items = [];
+
+    $('#deptName').value = state.department || '';
+    $('#director').value = state.director || '';
+    $('#officer1').value = state.officers?.[0] || '';
+    $('#officer2').value = state.officers?.[1] || '';
+    $('#generalTitle').value = state.generalCategory.title || '';
+
+    bindStammdaten();
+    bindAddSub();
+    bindGeneralItems();
+    bindToolbar();
+
+    renderSubList();
+    renderGeneralItemsEditor();
+    renderDossier();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>
