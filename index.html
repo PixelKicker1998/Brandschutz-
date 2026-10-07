@@ -160,64 +160,33 @@ body {
   font-size: 0.68rem; font-weight: 700; color: var(--blue-700); letter-spacing: 0.02em;
 }
 
-/* ALLGEMEINE PUNKTE — Editor-Sektion */
+/* ALLGEMEINE PUNKTE — Editor */
 .general-items-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.9rem;
+  display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.9rem;
 }
-
-/* Volle Funktionalität in der Editor-Ansicht */
 .general-editor-item {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--green-600);
-  border-radius: 10px;
-  padding: 0.6rem 0.75rem;
-  transition: all 0.15s;
+  background: #fff; border: 1px solid var(--border);
+  border-left: 3px solid var(--green-600); border-radius: 10px;
+  padding: 0.6rem 0.75rem; transition: all 0.15s;
 }
 .general-editor-item:hover { border-color: var(--border); box-shadow: var(--shadow-sm); }
-
-.general-editor-item .item-main {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-}
-
+.general-editor-item .item-main { display: flex; align-items: flex-start; gap: 0.6rem; }
 .general-editor-item .item-main input[type="checkbox"] {
-  margin-top: 0.35rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: var(--blue-700);
-  flex-shrink: 0;
-  cursor: pointer;
+  margin-top: 0.35rem; width: 1.1rem; height: 1.1rem;
+  accent-color: var(--blue-700); flex-shrink: 0; cursor: pointer;
 }
-
 .general-editor-item .item-main .general-item-text {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: var(--gray-900);
-  padding: 0.3rem 0;
-  line-height: 1.5;
-  min-width: 0;
-  -webkit-appearance: none;
-  appearance: none;
+  flex: 1; border: none; background: transparent;
+  font-size: 0.9rem; font-family: inherit; color: var(--gray-900);
+  padding: 0.3rem 0; line-height: 1.5; min-width: 0;
+  -webkit-appearance: none; appearance: none;
 }
 .general-editor-item .item-main .general-item-text:focus {
-  outline: none;
-  border-bottom: 1px dashed var(--blue-600);
+  outline: none; border-bottom: 1px dashed var(--blue-600);
 }
-
 .general-editor-item .item-main .item-tools {
-  display: flex;
-  gap: 0.1rem;
-  flex-shrink: 0;
-  opacity: 0.65;
-  transition: opacity 0.15s;
+  display: flex; gap: 0.1rem; flex-shrink: 0;
+  opacity: 0.65; transition: opacity 0.15s;
 }
 .general-editor-item:hover .item-main .item-tools { opacity: 1; }
 @media (hover: none) {
@@ -250,36 +219,50 @@ body {
 }
 
 .signature-section {
-  display: flex; flex-direction: column; gap: 1.75rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
   max-width: 720px; margin: 0 auto; text-align: left;
 }
+
+/* Direktor — bleibt prominent */
 .sig-director {
   padding: 1rem 1.25rem; background: var(--blue-50);
   border: 1px solid var(--border); border-radius: var(--r);
   border-left: 4px solid var(--blue-700);
 }
-.sig-role {
-  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.1em; color: var(--blue-700); margin-bottom: 0.35rem;
+.sig-director .sig-role {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--blue-800); margin-bottom: 0.35rem;
 }
-.sig-director .sig-role { color: var(--blue-800); font-size: 0.72rem; }
-.sig-name {
-  font-size: 1.05rem; font-weight: 600; color: var(--gray-900);
+.sig-director .sig-name {
+  font-size: 1.15rem; font-weight: 700; color: var(--blue-900);
   margin-bottom: 1.1rem;
 }
-.sig-director .sig-name { font-size: 1.15rem; font-weight: 700; color: var(--blue-900); }
-.sig-line { border-bottom: 1px solid var(--gray-500); height: 1.4rem; margin-bottom: 0.35rem; }
-.sig-caption {
+.sig-director .sig-line { border-bottom: 1px solid var(--gray-500); height: 1.4rem; margin-bottom: 0.35rem; }
+.sig-director .sig-caption {
   font-size: 0.7rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.04em;
 }
+
+/* BSB — kompakter */
 .sig-bsb-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem;
 }
 .sig-block {
-  padding: 0.9rem 1.1rem; background: var(--gray-50);
-  border: 1px solid var(--border); border-radius: var(--r);
+  padding: 0.65rem 0.85rem; background: var(--gray-50);
+  border: 1px solid var(--border); border-radius: var(--r-sm);
+}
+.sig-block .sig-role {
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--blue-700); margin-bottom: 0.2rem;
+}
+.sig-block .sig-name {
+  font-size: 0.88rem; font-weight: 600; color: var(--gray-700);
+  margin-bottom: 0.7rem;
+}
+.sig-block .sig-line { border-bottom: 1px solid var(--gray-300); height: 1rem; margin-bottom: 0.25rem; }
+.sig-block .sig-caption {
+  font-size: 0.62rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.04em;
 }
 
 /* CHECKLISTEN-BLOCK */
@@ -451,31 +434,73 @@ body {
   box-shadow: 0 0 0 3px rgba(26,107,168,0.08);
 }
 
-/* Bilder */
+/* ============================================================
+   BILDER — Seitenverhältnis erhalten, etwas größer
+   ============================================================ */
 .image-strip {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 0.45rem; margin-top: 0.55rem; margin-left: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  margin-left: 1.6rem;
+  align-items: flex-start;
 }
+
 .image-thumb {
-  position: relative; aspect-ratio: 1; border-radius: 10px;
-  overflow: hidden; border: 1px solid var(--border);
-  background: var(--gray-100); cursor: zoom-in;
+  position: relative;
+  display: inline-block;
+  max-height: 170px;
+  max-width: 260px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--gray-100);
+  cursor: zoom-in;
+  vertical-align: top;
+  flex-shrink: 0;
+  transition: box-shadow 0.15s;
 }
-.image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
-.image-thumb:hover img { transform: scale(1.04); }
+
+.image-thumb:hover {
+  box-shadow: 0 4px 14px rgba(10,37,64,0.12);
+}
+
+.image-thumb img {
+  display: block;
+  max-height: 170px;
+  max-width: 260px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
 .image-thumb .remove-img {
-  position: absolute; top: 4px; right: 4px;
-  background: rgba(26,35,48,0.75); color: #fff;
-  border: none; width: 24px; height: 24px; border-radius: 50%;
-  cursor: pointer; font-size: 0.7rem;
-  display: flex; align-items: center; justify-content: center;
-  line-height: 1; padding: 0; opacity: 1;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(26,35,48,0.78);
+  color: #fff;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  opacity: 1;
   transition: opacity 0.15s, background 0.15s;
+  z-index: 2;
 }
+
 @media (hover: hover) {
   .image-thumb .remove-img { opacity: 0; }
   .image-thumb:hover .remove-img { opacity: 1; }
 }
+
 .image-thumb .remove-img:hover { background: var(--red-600); }
 
 /* Tabellen */
@@ -517,13 +542,15 @@ body {
   position: fixed; bottom: calc(1.5rem + env(safe-area-inset-bottom));
   left: 50%; transform: translateX(-50%) translateY(90px);
   background: var(--blue-900); color: #fff;
-  padding: 0.7rem 1.3rem; border-radius: 10px;
-  font-size: 0.84rem; font-weight: 500;
+  padding: 0.8rem 1.4rem; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 500;
   box-shadow: 0 12px 32px rgba(10,37,64,0.25);
   opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 9999; pointer-events: none; max-width: 90vw; text-align: center;
+  line-height: 1.4;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.tip { background: #1e4620; }
 
 .image-viewer {
   position: fixed; inset: 0; background: rgba(10,25,40,0.92);
@@ -566,16 +593,25 @@ body {
   .title-page .dept-big { font-size: 28pt; color: #0a2540 !important; margin-bottom: 0.4cm; }
   .title-page .subtitle { font-size: 10pt; color: #444 !important; margin-bottom: 2.5cm; letter-spacing: 0.18em; }
 
-  .signature-section { max-width: 100%; gap: 2.5cm; margin-top: 3cm; }
+  /* Signaturen im Druck: Direktor prominent, BSB kleiner */
+  .signature-section { max-width: 100%; gap: 1.6cm; margin-top: 3cm; }
+
   .sig-director { background: none !important; border: none !important; border-left: none !important; padding: 0 !important; }
-  .sig-role { color: #333 !important; font-size: 9pt; margin-bottom: 0.3cm; }
-  .sig-name { font-size: 12pt; color: #000 !important; margin-bottom: 1.6cm; }
-  .sig-director .sig-name { font-size: 13pt; }
-  .sig-line { border-bottom: 1px solid #000 !important; height: 1cm; margin-bottom: 0.15cm; }
-  .sig-caption { color: #555 !important; font-size: 8pt; }
+  .sig-director .sig-role { color: #333 !important; font-size: 9pt; margin-bottom: 0.3cm; }
+  .sig-director .sig-name { font-size: 13pt; color: #000 !important; margin-bottom: 1.6cm; }
+  .sig-director .sig-line { border-bottom: 1px solid #000 !important; height: 1cm; margin-bottom: 0.15cm; }
+  .sig-director .sig-caption { color: #555 !important; font-size: 8pt; }
+
   .sig-bsb-grid { display: block; }
-  .sig-block { background: none !important; border: none !important; padding: 0 !important; margin-bottom: 2.5cm; }
+  .sig-block {
+    background: none !important; border: none !important;
+    padding: 0 !important; margin-bottom: 1.4cm;
+  }
   .sig-block:last-child { margin-bottom: 0; }
+  .sig-block .sig-role { color: #555 !important; font-size: 7.5pt; margin-bottom: 0.15cm; }
+  .sig-block .sig-name { font-size: 10pt; color: #000 !important; margin-bottom: 1cm; font-weight: 600; }
+  .sig-block .sig-line { border-bottom: 1px solid #000 !important; height: 0.9cm; margin-bottom: 0.15cm; }
+  .sig-block .sig-caption { color: #666 !important; font-size: 7pt; }
 
   .checklist-block {
     page-break-before: always;
@@ -666,16 +702,35 @@ body {
     color: #333 !important; overflow: hidden; height: auto;
   }
 
+  /* Bilder im Druck: größer, aber Seitenverhältnis erhalten */
   .image-strip {
-    display: flex !important; flex-wrap: wrap; gap: 0.15cm;
-    margin-left: 0.5cm; margin-top: 0.1cm; margin-bottom: 0.1cm;
+    display: flex !important; flex-wrap: wrap;
+    gap: 0.2cm; margin-left: 0.5cm;
+    margin-top: 0.12cm; margin-bottom: 0.12cm;
+    align-items: flex-start;
   }
   .image-thumb {
-    width: 4.2cm; height: 4.2cm; border-radius: 2px;
-    border: 0.5pt solid #cbd5e1 !important; cursor: default;
-    page-break-inside: avoid; overflow: hidden; background: #f4f8fc !important;
+    display: inline-block;
+    max-height: 5cm;
+    max-width: 7.5cm;
+    border-radius: 2px;
+    border: 0.5pt solid #cbd5e1 !important;
+    cursor: default;
+    page-break-inside: avoid;
+    overflow: hidden;
+    background: #f4f8fc !important;
+    vertical-align: top;
+    flex-shrink: 0;
   }
-  .image-thumb img { width: 100%; height: 100%; object-fit: cover; transform: none !important; }
+  .image-thumb img {
+    display: block;
+    max-height: 5cm;
+    max-width: 7.5cm;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transform: none !important;
+  }
   .image-thumb .remove-img { display: none !important; }
 
   .pruef-table {
@@ -726,7 +781,8 @@ body {
   .checklist-header .sub-name { font-size: 1.3rem; }
   .category { padding: 0.85rem 0.9rem; }
   .comment-box { margin-left: 0.5rem; }
-  .image-strip { margin-left: 0.5rem; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+  .image-strip { margin-left: 0.5rem; }
+  .image-thumb, .image-thumb img { max-height: 140px; max-width: 220px; }
   .item-tools { opacity: 1; }
   .meta-row { gap: 1rem; }
 }
@@ -1084,21 +1140,22 @@ body {
     return state.generalResponses[key];
   }
 
-  function toast(msg) {
+  function toast(msg, isTip) {
     const t = $('#toast');
     t.textContent = msg;
+    t.classList.toggle('tip', !!isTip);
     t.classList.add('show');
     clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+    t._timer = setTimeout(() => t.classList.remove('show'), isTip ? 5200 : 2200);
   }
 
   function save() {
-    try { localStorage.setItem('brandschutzDossier_v7', JSON.stringify(state)); } catch(e) {}
+    try { localStorage.setItem('brandschutzDossier_v8', JSON.stringify(state)); } catch(e) {}
   }
 
   function load() {
     try {
-      const raw = localStorage.getItem('brandschutzDossier_v7');
+      const raw = localStorage.getItem('brandschutzDossier_v8');
       if (!raw) return;
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') state = Object.assign(state, parsed);
@@ -1135,7 +1192,7 @@ body {
     });
   }
 
-  // ALLGEMEINE PUNKTE — Editor-Liste mit voller Funktionalität
+  // ALLGEMEINE PUNKTE — Editor
   function renderGeneralItemsEditor() {
     const container = $('#generalItemsList');
     if (!container) return;
@@ -1172,30 +1229,21 @@ body {
       `;
     }).join('');
 
-    // Events verdrahten
     container.querySelectorAll('.general-editor-item').forEach(el => {
       const key = el.dataset.generalKey;
       const itemId = el.dataset.generalId;
       const st = getGeneralResponse(key);
 
-      // Text-Input
       const textInput = el.querySelector('.general-item-text');
       textInput.addEventListener('input', () => {
         const it = state.generalCategory.items.find(i => i.id === itemId);
-        if (it) {
-          it.text = textInput.value;
-          save();
-          // Dossier aktualisieren (ohne Fokus zu verlieren)
-          scheduleDossierUpdate();
-        }
+        if (it) { it.text = textInput.value; save(); scheduleDossierUpdate(); }
       });
 
-      // Checkbox
       const cb = el.querySelector('input[type="checkbox"]');
       cb.checked = st.checked;
       cb.addEventListener('change', () => { st.checked = cb.checked; save(); scheduleDossierUpdate(); });
 
-      // Kommentar
       const commentBtn = el.querySelector('.toggle-comment');
       const commentBox = el.querySelector('.comment-box');
       const textarea = commentBox.querySelector('textarea');
@@ -1208,12 +1256,9 @@ body {
       });
 
       textarea.addEventListener('input', () => {
-        st.comment = textarea.value;
-        save();
-        scheduleDossierUpdate();
+        st.comment = textarea.value; save(); scheduleDossierUpdate();
       });
 
-      // Bild
       const imgBtn = el.querySelector('.add-image');
       const fileInput = el.querySelector('.image-input');
       imgBtn.addEventListener('click', () => fileInput.click());
@@ -1237,7 +1282,6 @@ body {
         fileInput.value = '';
       });
 
-      // Remove (ausblenden)
       const removeBtn = el.querySelector('.toggle-remove');
       if (st.removed) el.classList.add('item-removed');
       removeBtn.addEventListener('click', () => {
@@ -1249,7 +1293,6 @@ body {
         scheduleDossierUpdate();
       });
 
-      // Delete (endgültig)
       const deleteBtn = el.querySelector('.delete-general');
       deleteBtn.addEventListener('click', () => {
         if (!confirm('Diesen allgemeinen Punkt endgültig löschen?')) return;
@@ -1261,7 +1304,6 @@ body {
         toast('Punkt gelöscht.');
       });
 
-      // Bild-Strip initial
       renderGeneralImageStripEditor(el, key);
     });
   }
@@ -1295,7 +1337,6 @@ body {
       });
     });
 
-    // Bild-Klick → Lightbox
     strip.querySelectorAll('img').forEach(img => {
       img.addEventListener('click', () => {
         $('#viewerImg').src = img.src;
@@ -1304,7 +1345,6 @@ body {
     });
   }
 
-  // Dossier-Update entkoppeln (verhindert Fokusverlust bei Tippen)
   let dossierUpdateTimer = null;
   function scheduleDossierUpdate() {
     if (dossierUpdateTimer) return;
@@ -1353,7 +1393,6 @@ body {
       </div>
     `;
 
-    // Allgemeine Kategorie
     let generalHtml = '';
     const generalItems = (state.generalCategory.items || []).filter(it => it && it.text && it.text.trim());
     if (generalItems.length) {
@@ -1400,7 +1439,6 @@ body {
       `;
     }
 
-    // Unterabteilungen
     let subsHtml = '';
     if (!state.subDepartments.length && !generalItems.length) {
       subsHtml = `<p class="text-muted" style="text-align:center; padding:2rem;">Keine Inhalte vorhanden.</p>`;
@@ -1410,7 +1448,7 @@ body {
 
     wrap.innerHTML = titleHtml + generalHtml + subsHtml;
 
-    // ---- Events im Dossier: Allgemeine Punkte ----
+    // Events: allgemeine Punkte im Dossier
     wrap.querySelectorAll('[data-general-key]').forEach(el => {
       const key = el.dataset.generalKey;
       const st = getGeneralResponse(key);
@@ -1474,7 +1512,7 @@ body {
       renderImageStripGeneralDossier(el, key);
     });
 
-    // ---- Events: Unterabteilungen ----
+    // Events: Unterabteilungen
     state.subDepartments.forEach(sub => {
       const block = wrap.querySelector(`.checklist-block[data-sub="${sub.id}"]`);
       if (!block) return;
@@ -1635,9 +1673,7 @@ body {
     });
   }
 
-  // Sync: Dossier → Editor (nur Kommentar-Text und Bilder, um Re-Render zu vermeiden)
   function syncGeneralEditor() {
-    // Checkbox-Zustände und Removed-Status im Editor aktualisieren
     const editorItems = document.querySelectorAll('#generalItemsList .general-editor-item');
     editorItems.forEach(el => {
       const key = el.dataset.generalKey;
@@ -1932,14 +1968,22 @@ body {
   }
 
   function bindToolbar() {
+    // PDF / Drucken
     $('#printBtn').addEventListener('click', () => {
+      // Kommentare mit Inhalt sichtbar machen, damit sie gedruckt werden
       document.querySelectorAll('.check-item, .general-editor-item').forEach(item => {
         const ta = item.querySelector('.comment-box textarea');
         if (ta && ta.value.trim()) item.querySelector('.comment-box').classList.add('visible');
       });
-      window.print();
+
+      // Hinweis zur URL-Fußzeile anzeigen
+      toast('Tipp: Im Druckdialog unter „Weitere Einstellungen" die Option „Kopf- und Fußzeilen" deaktivieren – dann erscheint die URL nicht auf den Seiten.', true);
+
+      // Druck verzögert starten, damit der Hinweis kurz sichtbar ist
+      setTimeout(() => window.print(), 500);
     });
 
+    // HTML-Export
     $('#exportBtn').addEventListener('click', () => {
       const html = buildExportHtml();
       const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -1957,7 +2001,7 @@ body {
 
     $('#resetBtn').addEventListener('click', () => {
       if (!confirm('Wirklich alle Eingaben, Kommentare und Bilder zurücksetzen?')) return;
-      localStorage.removeItem('brandschutzDossier_v7');
+      localStorage.removeItem('brandschutzDossier_v8');
       state = {
         department: 'Klinik für Radiologie',
         director: 'Prof. Dr. med. Maria Schmidt',
@@ -2002,16 +2046,19 @@ body {
       .title-page img { max-height:110px; max-width:280px; object-fit:contain; margin:0 auto 2rem; display:block; }
       .title-page .dept-big { font-size:2.6rem; font-weight:800; color:#0a2540; letter-spacing:-0.03em; line-height:1.1; margin-bottom:0.6rem; }
       .title-page .subtitle { font-size:0.85rem; color:#6b7c92; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:2.5rem; }
-      .signature-section { max-width:720px; margin:0 auto; text-align:left; display:flex; flex-direction:column; gap:1.75rem; }
+      .signature-section { max-width:720px; margin:0 auto; text-align:left; display:flex; flex-direction:column; gap:1.5rem; }
       .sig-director { padding:1rem 1.25rem; background:#f4f8fc; border:1px solid #dbe5ef; border-radius:12px; border-left:4px solid #14507f; }
-      .sig-role { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#14507f; margin-bottom:0.35rem; }
-      .sig-director .sig-role { color:#0f3a5f; font-size:0.72rem; }
-      .sig-name { font-size:1.05rem; font-weight:600; color:#1a2330; margin-bottom:1.1rem; }
-      .sig-director .sig-name { font-size:1.15rem; font-weight:700; color:#0a2540; }
-      .sig-line { border-bottom:1px solid #6b7c92; height:1.4rem; margin-bottom:0.35rem; }
-      .sig-caption { font-size:0.7rem; color:#6b7c92; font-weight:500; letter-spacing:0.04em; }
-      .sig-bsb-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem; }
-      .sig-block { padding:0.9rem 1.1rem; background:#f8fafc; border:1px solid #dbe5ef; border-radius:12px; }
+      .sig-director .sig-role { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#0f3a5f; margin-bottom:0.35rem; }
+      .sig-director .sig-name { font-size:1.15rem; font-weight:700; color:#0a2540; margin-bottom:1.1rem; }
+      .sig-director .sig-line { border-bottom:1px solid #6b7c92; height:1.4rem; margin-bottom:0.35rem; }
+      .sig-director .sig-caption { font-size:0.7rem; color:#6b7c92; font-weight:500; letter-spacing:0.04em; }
+      .sig-bsb-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.9rem; }
+      .sig-block { padding:0.65rem 0.85rem; background:#f8fafc; border:1px solid #dbe5ef; border-radius:8px; }
+      .sig-block .sig-role { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#14507f; margin-bottom:0.2rem; }
+      .sig-block .sig-name { font-size:0.88rem; font-weight:600; color:#3a4a5c; margin-bottom:0.7rem; }
+      .sig-block .sig-line { border-bottom:1px solid #cbd5e1; height:1rem; margin-bottom:0.25rem; }
+      .sig-block .sig-caption { font-size:0.62rem; color:#6b7c92; font-weight:500; letter-spacing:0.04em; }
+
       .checklist-block { margin-bottom:3rem; page-break-inside:avoid; border:1px solid #dbe5ef; border-radius:18px;
                          overflow:hidden; background:#fff; box-shadow:0 4px 16px rgba(10,37,64,0.06); }
       .checklist-block.general-block .checklist-header { background:linear-gradient(135deg,#1e4620 0%,#2f6a37 100%); }
@@ -2043,8 +2090,13 @@ body {
       .item-text { font-size:0.9rem; line-height:1.5; color:#1a2330; }
       .comment-box { margin-top:0.45rem; margin-left:1.6rem; }
       .comment-box .comment-text { border-left:3px solid #14507f; background:#f8fafc; padding:0.5rem 0.8rem; border-radius:0 6px 6px 0; font-size:0.88rem; color:#3a4a5c; white-space:pre-wrap; }
-      .image-strip { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem; margin-left:1.6rem; }
-      .image-strip img { width:220px; height:220px; object-fit:cover; border-radius:10px; border:1px solid #dbe5ef; }
+
+      /* Bilder: Größe größer, Seitenverhältnis erhalten */
+      .image-strip { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.65rem; margin-left:1.6rem; align-items:flex-start; }
+      .image-strip .image-thumb { display:inline-block; max-height:190px; max-width:280px; border-radius:10px;
+                                  overflow:hidden; border:1px solid #dbe5ef; background:#f0f4f8; flex-shrink:0; }
+      .image-strip .image-thumb img { display:block; max-height:190px; max-width:280px; width:auto; height:auto; object-fit:contain; }
+
       .info-box { font-size:0.8rem; color:#6b7c92; margin-top:0.5rem; padding:0.4rem 0.7rem; background:#fff; border-radius:6px; display:inline-block; font-style:italic; }
       .pruef-table { width:100%; border-collapse:collapse; font-size:0.85rem; background:#fff; border-radius:8px; overflow:hidden; }
       .pruef-table th { text-align:left; font-weight:700; color:#0a2540; padding:0.6rem 0.75rem; background:#f0f4f8; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; }
@@ -2060,16 +2112,22 @@ body {
         .title-page img { max-height:110px; max-width:280px; margin-bottom:1.5cm; }
         .title-page .dept-big { font-size:28pt; }
         .title-page .subtitle { font-size:10pt; margin-bottom:2.5cm; }
-        .signature-section { max-width:100%; gap:2.5cm; margin-top:3cm; }
+        .signature-section { max-width:100%; gap:1.6cm; margin-top:3cm; }
+
         .sig-director { background:none !important; border:none !important; border-left:none !important; padding:0 !important; }
-        .sig-role { color:#333 !important; font-size:9pt; margin-bottom:0.3cm; }
-        .sig-name { font-size:12pt; color:#000 !important; margin-bottom:1.6cm; }
-        .sig-director .sig-name { font-size:13pt; }
-        .sig-line { border-bottom:1px solid #000 !important; height:1cm; margin-bottom:0.15cm; }
-        .sig-caption { color:#555 !important; font-size:8pt; }
+        .sig-director .sig-role { color:#333 !important; font-size:9pt; margin-bottom:0.3cm; }
+        .sig-director .sig-name { font-size:13pt; color:#000 !important; margin-bottom:1.6cm; }
+        .sig-director .sig-line { border-bottom:1px solid #000 !important; height:1cm; margin-bottom:0.15cm; }
+        .sig-director .sig-caption { color:#555 !important; font-size:8pt; }
+
         .sig-bsb-grid { display:block; }
-        .sig-block { background:none !important; border:none !important; padding:0 !important; margin-bottom:2.5cm; }
+        .sig-block { background:none !important; border:none !important; padding:0 !important; margin-bottom:1.4cm; }
         .sig-block:last-child { margin-bottom:0; }
+        .sig-block .sig-role { color:#555 !important; font-size:7.5pt; margin-bottom:0.15cm; }
+        .sig-block .sig-name { font-size:10pt; color:#000 !important; margin-bottom:1cm; font-weight:600; }
+        .sig-block .sig-line { border-bottom:1px solid #000 !important; height:0.9cm; margin-bottom:0.15cm; }
+        .sig-block .sig-caption { color:#666 !important; font-size:7pt; }
+
         .checklist-block { page-break-before:always; border:none; border-radius:0; margin-bottom:0; box-shadow:none; }
         .checklist-header { -webkit-print-color-adjust:exact; print-color-adjust:exact;
                             padding:0.45cm 0.55cm 0.4cm; border-radius:3px 3px 0 0; margin-bottom:0.3cm; }
@@ -2095,8 +2153,12 @@ body {
         .comment-box { margin-left:0.5cm; margin-top:0.05cm; margin-bottom:0.05cm; }
         .comment-box .comment-text { -webkit-print-color-adjust:exact; print-color-adjust:exact;
                                      font-size:8.5pt; padding:0.12cm 0.35cm; line-height:1.3; }
-        .image-strip { gap:0.15cm; margin-left:0.5cm; margin-top:0.1cm; margin-bottom:0.1cm; }
-        .image-strip img { width:4.2cm; height:4.2cm; page-break-inside:avoid; }
+
+        /* Bilder im Druck: größer, Seitenverhältnis erhalten */
+        .image-strip { gap:0.2cm; margin-left:0.5cm; margin-top:0.12cm; margin-bottom:0.12cm; align-items:flex-start; }
+        .image-strip .image-thumb { display:inline-block; max-height:5cm; max-width:7.5cm; border:0.5pt solid #cbd5e1; border-radius:2px; page-break-inside:avoid; }
+        .image-strip .image-thumb img { display:block; max-height:5cm; max-width:7.5cm; width:auto; height:auto; object-fit:contain; }
+
         .pruef-table { -webkit-print-color-adjust:exact; print-color-adjust:exact; font-size:8.5pt; line-height:1.25; }
         .pruef-table th { -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:0.12cm 0.2cm; font-size:7.5pt; }
         .pruef-table td { padding:0.1cm 0.2cm; }
@@ -2168,7 +2230,7 @@ body {
           body += `<div class="comment-box"><div class="comment-text">${escapeHtml(st.comment)}</div></div>`;
         }
         if (st.images && st.images.length) {
-          body += `<div class="image-strip">${st.images.map(src => `<img src="${src}" alt="Anhang">`).join('')}</div>`;
+          body += `<div class="image-strip">${st.images.map(src => `<div class="image-thumb"><img src="${src}" alt="Anhang"></div>`).join('')}</div>`;
         }
         body += `</li>`;
       });
@@ -2237,7 +2299,7 @@ body {
               body += `<div class="comment-box"><div class="comment-text">${escapeHtml(st.comment)}</div></div>`;
             }
             if (st.images && st.images.length) {
-              body += `<div class="image-strip">${st.images.map(src => `<img src="${src}" alt="Anhang">`).join('')}</div>`;
+              body += `<div class="image-strip">${st.images.map(src => `<div class="image-thumb"><img src="${src}" alt="Anhang"></div>`).join('')}</div>`;
             }
             body += `</li>`;
           });
@@ -2253,7 +2315,7 @@ body {
               body += `<div class="comment-box"><div class="comment-text">${escapeHtml(st.comment)}</div></div>`;
             }
             if (st.images && st.images.length) {
-              body += `<div class="image-strip">${st.images.map(src => `<img src="${src}" alt="Anhang">`).join('')}</div>`;
+              body += `<div class="image-strip">${st.images.map(src => `<div class="image-thumb"><img src="${src}" alt="Anhang"></div>`).join('')}</div>`;
             }
             body += `</li>`;
           });
